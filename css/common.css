@@ -963,13 +963,10 @@ code {
 }
 
 .animate-on-scroll {
-  opacity: 0;
-  transform: translateY(20px);
   transition: opacity 0.6s ease-out, transform 0.6s ease-out;
 }
 .animate-on-scroll.visible {
-  opacity: 1;
-  transform: translateY(0);
+  /* JS 注入后播放入场动画（渐进增强），默认已可见 */
 }
 
 .fade-in-up {

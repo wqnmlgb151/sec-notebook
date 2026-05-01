@@ -123,22 +123,29 @@ function initScrollEffects() {
   var observer = new IntersectionObserver(function (entries) {
     entries.forEach(function (entry) {
       if (entry.isIntersecting) {
-        entry.target.classList.add('visible');
+        entry.target.style.opacity = '1';
+        entry.target.style.transform = 'translateY(0)';
         observer.unobserve(entry.target);
       }
     });
   }, observerOptions);
 
   document.querySelectorAll('.animate-on-scroll').forEach(function (el) {
+    // 渐进增强：JS 可用时才隐藏→动画入场，默认 CSS 保持可见
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(20px)';
     observer.observe(el);
   });
 
-  // 回退：2s 后强制显示所有尚未可见的元素（覆盖 Observer 漏触发）
+  // 兜底：1.5s 后强制显示所有未触发的元素
   setTimeout(function () {
-    document.querySelectorAll('.animate-on-scroll:not(.visible)').forEach(function (el) {
-      el.classList.add('visible');
+    document.querySelectorAll('.animate-on-scroll').forEach(function (el) {
+      if (el.style.opacity === '0') {
+        el.style.opacity = '1';
+        el.style.transform = 'translateY(0)';
+      }
     });
-  }, 2000);
+  }, 1500);
 }
 
 /* -------- Toast 消息系统 -------- */
