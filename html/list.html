@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://unpkg.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; img-src 'self' data: https:; font-src 'self'; connect-src 'self' https://api.github.com https://raw.githubusercontent.com; frame-src 'none'; object-src 'none'; base-uri 'self';" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://unpkg.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; img-src 'self' data: https:; font-src 'self'; connect-src 'self' https://raw.githubusercontent.com; frame-src 'none'; object-src 'none'; base-uri 'self';" />
   <title>学习笔记 — WebPenTest Lab</title>
   <link rel="stylesheet" href="../css/common.css" />
   <!-- highlight.js 代码高亮主题 -->
@@ -35,10 +35,9 @@
           <!-- ===== 移动端侧边栏切换按钮 ===== -->
           <button class="sidebar-toggle hide-desktop"
                   @click="showSidebar = !showSidebar"
-                  :aria-label="showSidebar ? '收起目录' : '展开目录'"
-                  aria-expanded="true">
+                  :aria-label="showSidebar ? '收起目录' : '展开目录'">
             <span v-if="showSidebar">✕ 收起目录</span>
-            <span v-else>☰ 展开目录</span>
+            <span v-else>☰ 展开目录 ({{ files.length }} 篇)</span>
           </button>
 
           <!-- ===== 侧边栏：文件列表 ===== -->
@@ -48,31 +47,13 @@
                 <h3 class="sidebar-title">
                   <span style="font-size: 1.2rem;">📚</span> 课程目录
                 </h3>
-                <button class="btn btn-ghost btn-sm"
-                        @click="fetchDirectory()"
-                        :disabled="isDirLoading"
-                        aria-label="刷新目录"
-                        title="刷新目录">
-                  🔄
-                </button>
+                <span class="sidebar-count">{{ files.length }} 篇</span>
               </div>
 
-              <!-- 目录加载态 -->
-              <div v-if="isDirLoading" class="sidebar-loading">
-                <div class="skeleton skeleton-line" v-for="n in 8" :key="n"
-                     :style="'width:' + (60 + Math.random() * 40) + '%'"></div>
-              </div>
-
-              <!-- 目录错误态 -->
-              <div v-else-if="dirError" class="sidebar-error">
-                <p>{{ dirError }}</p>
-                <button class="btn btn-outline btn-sm" @click="fetchDirectory()">重试</button>
-              </div>
-
-              <!-- 目录文件列表 -->
-              <nav v-else class="sidebar-nav" aria-label="课程目录">
-                <div v-for="file in filteredFiles" :key="file.name"
-                     :class="['sidebar-item', selectedFile && selectedFile.name === file.name ? 'active' : '']"
+              <!-- 文件列表 -->
+              <nav class="sidebar-nav" aria-label="课程目录">
+                <div v-for="file in files" :key="file.rawName"
+                     :class="['sidebar-item', selectedFile && selectedFile.rawName === file.rawName ? 'active' : '']"
                      role="button"
                      :tabindex="0"
                      @click="selectFile(file)"
@@ -85,20 +66,13 @@
                     <span class="sidebar-item-num">{{ file.num < 10 ? '0' + file.num : file.num }}</span>
                     <span class="sidebar-item-title">{{ file.title }}</span>
                   </div>
-                  <span class="sidebar-item-size">{{ formatSize(file.size) }}</span>
-                </div>
-                <div v-if="filteredFiles.length === 0 && searchQuery" class="sidebar-empty">
-                  无匹配笔记
                 </div>
               </nav>
 
-              <!-- 侧边栏底部：资源目录链接 -->
-              <div v-if="subdirs.length > 0" class="sidebar-footer">
-                <div class="sidebar-subtitle">资源目录</div>
-                <a v-for="dir in subdirs" :key="dir.name"
-                   :href="dir.htmlUrl" target="_blank" rel="noopener"
-                   class="sidebar-resource-link">
-                  📁 {{ dir.name }}
+              <!-- 侧边栏底部：GitHub 链接 -->
+              <div class="sidebar-footer">
+                <a :href="GITHUB_BASE" target="_blank" rel="noopener" class="sidebar-resource-link">
+                  📁 在 GitHub 查看全部资源
                 </a>
               </div>
             </div>
@@ -185,8 +159,7 @@
                   <div>
                     <h2 class="content-file-title">{{ selectedFile.title }}</h2>
                     <div class="content-file-meta">
-                      <span>{{ selectedFile.name }}</span>
-                      <span>{{ formatSize(selectedFile.size) }}</span>
+                      <span>{{ selectedFile.rawName }}</span>
                       <span>编号 #{{ selectedFile.num }}</span>
                     </div>
                   </div>

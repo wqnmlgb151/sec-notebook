@@ -1196,6 +1196,11 @@ code {
   align-items: center;
   gap: 0.5rem;
 }
+.sidebar-count {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  font-family: var(--font-mono);
+}
 
 /* 侧边栏导航列表 */
 .sidebar-nav {
