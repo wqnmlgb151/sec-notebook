@@ -98,12 +98,14 @@ function initNavigation() {
 
 /* 高亮当前页面导航 */
 function highlightCurrentNav() {
-  const currentPath = window.location.pathname;
-  const pageName = currentPath.split('/').pop() || 'index.html';
-  const navLinks = document.querySelectorAll('.main-nav a');
+  var currentPath = window.location.pathname;
+  var pageName = currentPath.split('/').pop() || 'index.html';
+  if (currentPath === '/' || pageName === '') { pageName = 'index.html'; }
+  var navLinks = document.querySelectorAll('.main-nav a');
   navLinks.forEach(function (link) {
-    const href = link.getAttribute('href');
-    if (href === pageName || (pageName === '' && href === 'index.html')) {
+    var href = link.getAttribute('href');
+    // 匹配绝对路径 /html/xxx.html 或相对路径 xxx.html
+    if (href && (href.indexOf(pageName) !== -1 || (pageName === 'index.html' && href.indexOf('index.html') !== -1))) {
       link.classList.add('active');
     }
   });
@@ -118,7 +120,7 @@ function initScrollEffects() {
     rootMargin: '0px 0px -50px 0px'
   };
 
-  const observer = new IntersectionObserver(function (entries) {
+  var observer = new IntersectionObserver(function (entries) {
     entries.forEach(function (entry) {
       if (entry.isIntersecting) {
         entry.target.classList.add('visible');
@@ -130,6 +132,13 @@ function initScrollEffects() {
   document.querySelectorAll('.animate-on-scroll').forEach(function (el) {
     observer.observe(el);
   });
+
+  // 回退：2s 后强制显示所有尚未可见的元素（覆盖 Observer 漏触发）
+  setTimeout(function () {
+    document.querySelectorAll('.animate-on-scroll:not(.visible)').forEach(function (el) {
+      el.classList.add('visible');
+    });
+  }, 2000);
 }
 
 /* -------- Toast 消息系统 -------- */
