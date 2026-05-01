@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://unpkg.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self'; connect-src 'none'; frame-src 'none'; object-src 'none'; base-uri 'self';" />
+  <title>关于项目 — WebPenTest Lab</title>
+  <link rel="stylesheet" href="../css/common.css" />
+  <style>
+    .timeline {
+      position: relative;
+      padding-left: 2rem;
+    }
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 1px;
+      background: var(--border-default);
+    }
+    .timeline-item {
+      position: relative;
+      margin-bottom: 2rem;
+      padding-left: 2rem;
+    }
+    .timeline-item::before {
+      content: '';
+      position: absolute;
+      left: -2.3rem;
+      top: 0.4rem;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--color-accent);
+      box-shadow: 0 0 12px var(--color-accent-glow);
+    }
+    .team-card {
+      text-align: center;
+      padding: 2rem 1.5rem;
+    }
+    .team-avatar {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--color-accent), var(--color-accent-purple));
+      margin: 0 auto 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+    }
+  </style>
+</head>
+<body>
+  <!-- 跳过导航链接（无障碍） -->
+  <a href="#main-content" class="skip-nav">跳到主要内容</a>
+
+  <!-- ========== Header（由 components.js 动态注入）========== -->
+  <header id="site-header" class="site-header"></header>
+
+  <main id="main-content">
+    <!-- ========== 页面标题 ========== -->
+    <section class="page-hero">
+      <div class="container">
+        <div class="breadcrumb">
+          <a href="index.html">首页</a><span class="sep">/</span><span>关于项目</span>
+        </div>
+        <h1>关于 WebPenTest Lab</h1>
+        <p>以攻促防，构建 Web 安全知识体系</p>
+      </div>
+    </section>
+
+    <!-- ========== 项目介绍 ========== -->
+    <section class="section" style="padding-top: 0;">
+      <div class="container" style="max-width: 800px;">
+        <div class="card card-glow-cyan" style="padding: 2.5rem; margin-bottom: 2rem;">
+          <h2 style="margin-bottom: 1rem;">项目背景</h2>
+          <p>
+            Web 应用已成为现代社会的基础设施，但安全问题层出不穷。
+            从 OWASP 每年发布的 Top 10 榜单可以看出，SQL 注入、XSS、CSRF
+            等经典漏洞在数十年后依然活跃。本项目旨在为前端开发者、安全初学者
+            提供一个系统化的 Web 安全学习平台，从攻击者视角理解漏洞原理，
+            从根本上建立安全防御思维。
+          </p>
+        </div>
+
+        <div class="card card-glow-cyan" style="padding: 2.5rem; margin-bottom: 2rem;">
+          <h2 style="margin-bottom: 1rem;">项目目标</h2>
+          <div class="grid grid-2">
+            <div class="card card-glass" style="padding: 1.5rem;">
+              <div style="font-size: 1.8rem; margin-bottom: 0.5rem;">📚</div>
+              <h4 style="margin-bottom: 0.3rem;">知识体系</h4>
+              <p style="font-size: 0.85rem;">基于 OWASP 标准分类，覆盖主流 Web 漏洞类型</p>
+            </div>
+            <div class="card card-glass" style="padding: 1.5rem;">
+              <div style="font-size: 1.8rem; margin-bottom: 0.5rem;">🔬</div>
+              <h4 style="margin-bottom: 0.3rem;">实战导向</h4>
+              <p style="font-size: 0.85rem;">每个漏洞配有攻击示例和防御方案</p>
+            </div>
+            <div class="card card-glass" style="padding: 1.5rem;">
+              <div style="font-size: 1.8rem; margin-bottom: 0.5rem;">🛡️</div>
+              <h4 style="margin-bottom: 0.3rem;">防御优先</h4>
+              <p style="font-size: 0.85rem;">强调安全编码实践和防护措施</p>
+            </div>
+            <div class="card card-glass" style="padding: 1.5rem;">
+              <div style="font-size: 1.8rem; margin-bottom: 0.5rem;">🎓</div>
+              <h4 style="margin-bottom: 0.3rem;">教育目的</h4>
+              <p style="font-size: 0.85rem;">所有内容仅用于学习，不涉及真实攻击</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 技术栈 -->
+        <div class="card card-glow-cyan" style="padding: 2.5rem; margin-bottom: 2rem;">
+          <h2 style="margin-bottom: 1rem;">技术栈</h2>
+          <div class="data-table-container" style="overflow-x: auto;">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>技术</th>
+                  <th>版本</th>
+                  <th>用途</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>HTML5</td>
+                  <td>-</td>
+                  <td>语义化页面结构，Header/Nav/Main/Footer 四部分布局</td>
+                </tr>
+                <tr>
+                  <td>CSS3</td>
+                  <td>-</td>
+                  <td>响应式布局(Flex+Grid)、玻璃态设计、动画特效</td>
+                </tr>
+                <tr>
+                  <td>JavaScript (ES6+)</td>
+                  <td>-</td>
+                  <td>导航交互、表单验证、Toast 系统、滚动动画</td>
+                </tr>
+                <tr>
+                  <td>Vue.js</td>
+                  <td>3.x</td>
+                  <td>漏洞库搜索筛选、数据驱动视图、详情弹窗</td>
+                </tr>
+                <tr>
+                  <td>响应式设计</td>
+                  <td>-</td>
+                  <td>三端适配: ≤768px手机 / 769-1024px平板 / ≥1025px桌面</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- 设计风格 -->
+        <div class="card card-glow-cyan" style="padding: 2.5rem; margin-bottom: 2rem;">
+          <h2 style="margin-bottom: 1rem;">设计理念</h2>
+          <p>本项目的 UI 设计采用 <strong>Dark Cyber Glassmorphism</strong> 风格，融合以下设计元素：</p>
+          <div style="display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 1.5rem;">
+            <span class="badge badge-cyan">暗色主题</span>
+            <span class="badge badge-purple">玻璃态/毛玻璃</span>
+            <span class="badge badge-blue">霓虹辉光</span>
+            <span class="badge badge-green">噪点纹理</span>
+            <span class="badge badge-orange">大圆角卡片</span>
+            <span class="badge badge-cyan">终端风格</span>
+            <span class="badge badge-purple">Glitch动画</span>
+            <span class="badge badge-red">扫描线效果</span>
+            <span class="badge badge-blue">Bento Grid</span>
+            <span class="badge badge-green">响应式三端适配</span>
+          </div>
+        </div>
+
+        <!-- 开发规划 (时间线) -->
+        <div class="card card-glow-cyan" style="padding: 2.5rem; margin-bottom: 2rem;">
+          <h2 style="margin-bottom: 1.5rem;">开发规划</h2>
+          <div class="timeline">
+            <div class="timeline-item">
+              <h4>第一阶段：主题与功能确定</h4>
+              <p style="font-size: 0.9rem;">确定网络安全渗透测试主题，规划核心功能清单与页面结构，完成需求分析文档</p>
+            </div>
+            <div class="timeline-item">
+              <h4>第二阶段：基础页面搭建</h4>
+              <p style="font-size: 0.9rem;">完成 HTML5 语义化结构、CSS3 暗色主题与玻璃态样式系统、基础页面布局</p>
+            </div>
+            <div class="timeline-item">
+              <h4>第三阶段：交互与响应式</h4>
+              <p style="font-size: 0.9rem;">JavaScript 导航交互、Vue3 漏洞库模块、三端响应式适配、表单验证系统</p>
+            </div>
+            <div class="timeline-item">
+              <h4>第四阶段：测试与文档</h4>
+              <p style="font-size: 0.9rem;">兼容性测试、功能测试、撰写课程作品说明书、准备答辩材料</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 声明 -->
+        <div class="leak-panel" style="background: rgba(239, 68, 68, 0.06); border: 1px solid rgba(239, 68, 68, 0.2); border-radius: var(--radius-lg); padding: 1.5rem; margin-bottom: 2rem;">
+          <h4 style="color: var(--color-accent-red); margin-bottom: 0.75rem;">⚠️ 免责声明</h4>
+          <p style="color: var(--color-text-tertiary); font-size: 0.85rem; line-height: 1.8;">
+            本项目仅为 Web 前端课程大作业，所有内容仅供教育学习目的。
+            项目中涉及的安全知识与技术仅用于帮助开发者理解漏洞原理、
+            提升安全防御意识。任何将本项目内容用于非法用途的行为与本项目无关。
+            <strong style="color: var(--color-accent-red);">未经授权对他人系统进行渗透测试属于违法行为。</strong>
+          </p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ========== Footer（由 components.js 动态注入）========== -->
+  <footer id="site-footer" class="site-footer"></footer>
+
+  <script src="../js/components.js"></script>
+  <script src="../js/common.js"></script>
+</body>
+</html>

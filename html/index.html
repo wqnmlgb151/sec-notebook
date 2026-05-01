@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://unpkg.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self'; connect-src 'none'; frame-src 'none'; object-src 'none'; base-uri 'self';" />
+  <title>WebPenTest Lab — 网络安全渗透测试学习平台</title>
+  <link rel="stylesheet" href="../css/common.css" />
+</head>
+<body>
+  <!-- 跳过导航链接（无障碍） -->
+  <a href="#main-content" class="skip-nav">跳到主要内容</a>
+
+  <!-- ========== Header 导航（由 components.js 动态注入）========== -->
+  <header id="site-header" class="site-header"></header>
+
+  <main id="main-content">
+    <!-- ========== Hero 首屏 ========== -->
+    <section class="hero">
+      <div class="hero-bg-orb hero-bg-orb--cyan"></div>
+      <div class="hero-bg-orb hero-bg-orb--purple"></div>
+      <div class="hero-content">
+        <div class="hero-badge fade-in-up">
+          <span class="dot"></span> OWASP Top 10 漏洞知识库
+        </div>
+        <h1 class="fade-in-up fade-in-up--delay-1">
+          探索<span class="highlight"> Web 安全</span><br>构建防御思维
+        </h1>
+        <p class="fade-in-up fade-in-up--delay-2">
+          从攻击者视角理解 Web 漏洞，掌握渗透测试核心技能。
+          系统化学习 SQL 注入、XSS、CSRF、SSRF 等常见安全风险，
+          建立完整的安全攻防知识体系。
+        </p>
+        <div class="fade-in-up fade-in-up--delay-3">
+          <a href="list.html" class="btn btn-primary btn-lg">浏览漏洞库</a>
+          <a href="about.html" class="btn btn-outline btn-lg ml-1" style="margin-left: 1rem;">了解项目</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== 统计数据 ========== -->
+    <section class="section">
+      <div class="container">
+        <div class="grid grid-4" style="text-align: center;">
+          <div class="animate-on-scroll">
+            <div style="font-size: 2.5rem; font-weight: 900; color: var(--color-accent-glow);">10+</div>
+            <p style="font-size: 0.85rem; margin-top: 0.5rem;">漏洞类型覆盖</p>
+          </div>
+          <div class="animate-on-scroll">
+            <div style="font-size: 2.5rem; font-weight: 900; color: var(--color-accent-purple);">OWASP</div>
+            <p style="font-size: 0.85rem; margin-top: 0.5rem;">国际标准分类</p>
+          </div>
+          <div class="animate-on-scroll">
+            <div style="font-size: 2.5rem; font-weight: 900; color: var(--color-accent-emerald);">4级</div>
+            <p style="font-size: 0.85rem; margin-top: 0.5rem;">严重度分级体系</p>
+          </div>
+          <div class="animate-on-scroll">
+            <div style="font-size: 2.5rem; font-weight: 900; color: var(--color-accent-fuchsia);">实战</div>
+            <p style="font-size: 0.85rem; margin-top: 0.5rem;">攻防演练案例</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== Bento Grid 核心模块 ========== -->
+    <section class="section">
+      <div class="container">
+        <h2 class="text-center mb-3">学习路径</h2>
+        <p class="text-center mb-4" style="color: var(--color-text-tertiary); max-width: 600px; margin-left: auto; margin-right: auto;">
+          从基础概念到实战技能，循序渐进的渗透测试学习之路
+        </p>
+        <div class="bento-grid">
+          <!-- 卡片 1: 注入攻击 -->
+          <div class="bento-item animate-on-scroll">
+            <div class="card-icon" style="background: rgba(6,182,212,0.15);">🗄️</div>
+            <h3>注入类攻击</h3>
+            <p>SQL 注入、命令注入、XXE — 理解攻击者如何通过恶意输入操控后端系统。</p>
+            <div style="margin-top: 1rem;">
+              <span class="badge badge-red">严重</span>
+              <span class="badge badge-cyan" style="margin-left: 0.5rem;">OWASP A03</span>
+            </div>
+          </div>
+
+          <!-- 卡片 2: 跨站脚本 -->
+          <div class="bento-item animate-on-scroll">
+            <div class="card-icon" style="background: rgba(168,85,247,0.15);">💉</div>
+            <h3>跨站脚本 (XSS)</h3>
+            <p>反射型、存储型、DOM 型 XSS — 前端最常见也最容易被忽视的安全漏洞。</p>
+            <div style="margin-top: 1rem;">
+              <span class="badge badge-orange">高危</span>
+              <span class="badge badge-purple" style="margin-left: 0.5rem;">客户端安全</span>
+            </div>
+          </div>
+
+          <!-- 卡片 3: 访问控制 -->
+          <div class="bento-item animate-on-scroll">
+            <div class="card-icon" style="background: rgba(249,115,22,0.15);">🔑</div>
+            <h3>访问控制缺陷</h3>
+            <p>CSRF、IDOR、SSRF — 权限校验不当导致的数据泄露与越权操作。</p>
+            <div style="margin-top: 1rem;">
+              <span class="badge badge-orange">高危</span>
+              <span class="badge badge-orange" style="margin-left: 0.5rem;">OWASP A01</span>
+            </div>
+          </div>
+
+          <!-- 卡片 4: 文件操作 -->
+          <div class="bento-item animate-on-scroll">
+            <div class="card-icon" style="background: rgba(239,68,68,0.15);">📂</div>
+            <h3>文件操作漏洞</h3>
+            <p>文件上传、路径遍历 — 攻击者获取服务器文件系统访问权限的常见方式。</p>
+            <div style="margin-top: 1rem;">
+              <span class="badge badge-red">严重</span>
+              <span class="badge badge-red" style="margin-left: 0.5rem;">文件安全</span>
+            </div>
+          </div>
+
+          <!-- 宽卡片: 渗透测试流程 -->
+          <div class="bento-item bento-item--wide animate-on-scroll" style="background: linear-gradient(135deg, rgba(6,182,212,0.05), rgba(168,85,247,0.05));">
+            <h3 style="margin-bottom: 1.5rem;">渗透测试方法论</h3>
+            <div class="grid grid-4" style="text-align: center;">
+              <div>
+                <div style="font-size: 2rem; margin-bottom: 0.5rem;">🔍</div>
+                <div style="font-weight: 700; margin-bottom: 0.3rem;">信息收集</div>
+                <p style="font-size: 0.8rem;">子域名、端口、指纹</p>
+              </div>
+              <div>
+                <div style="font-size: 2rem; margin-bottom: 0.5rem;">🎯</div>
+                <div style="font-weight: 700; margin-bottom: 0.3rem;">漏洞扫描</div>
+                <p style="font-size: 0.8rem;">自动化+手动分析</p>
+              </div>
+              <div>
+                <div style="font-size: 2rem; margin-bottom: 0.5rem;">💥</div>
+                <div style="font-weight: 700; margin-bottom: 0.3rem;">漏洞利用</div>
+                <p style="font-size: 0.8rem;">POC编写与验证</p>
+              </div>
+              <div>
+                <div style="font-size: 2rem; margin-bottom: 0.5rem;">📋</div>
+                <div style="font-weight: 700; margin-bottom: 0.3rem;">报告输出</div>
+                <p style="font-size: 0.8rem;">风险评级与修复建议</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== 常用工具展示 ========== -->
+    <section class="section">
+      <div class="container">
+        <h2 class="text-center mb-3">常用渗透测试工具</h2>
+        <p class="text-center mb-4" style="color: var(--color-text-tertiary); max-width: 600px; margin-left: auto; margin-right: auto;">
+          行业标准工具，安全从业者的必备武器库
+        </p>
+        <div class="grid grid-3">
+          <div class="card card-glow-cyan animate-on-scroll">
+            <div class="card-icon" style="background: rgba(6,182,212,0.15);">🔍</div>
+            <h3>Burp Suite</h3>
+            <p>Web 安全测试的行业标准工具，支持代理拦截、爬虫、扫描、重放等完整功能。</p>
+            <span class="badge badge-cyan" style="margin-top: 0.75rem;">代理工具</span>
+          </div>
+          <div class="card card-glow-cyan animate-on-scroll">
+            <div class="card-icon" style="background: rgba(168,85,247,0.15);">🛡️</div>
+            <h3>Nmap</h3>
+            <p>网络发现与安全审计利器，支持主机发现、端口扫描、服务版本检测与操作系统指纹识别。</p>
+            <span class="badge badge-purple" style="margin-top: 0.75rem;">信息收集</span>
+          </div>
+          <div class="card card-glow-cyan animate-on-scroll">
+            <div class="card-icon" style="background: rgba(16,185,129,0.15);">⚡</div>
+            <h3>SQLMap</h3>
+            <p>自动化 SQL 注入检测与利用工具，支持多种数据库和注入技术，渗透测试必备。</p>
+            <span class="badge badge-green" style="margin-top: 0.75rem;">注入检测</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ========== Footer 页脚（由 components.js 动态注入）========== -->
+  <footer id="site-footer" class="site-footer"></footer>
+
+  <script src="../js/components.js"></script>
+  <script src="../js/common.js"></script>
+</body>
+</html>
