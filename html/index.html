@@ -3,179 +3,389 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://unpkg.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self'; connect-src 'none'; frame-src 'none'; object-src 'none'; base-uri 'self';" />
-  <title>WebPenTest Lab — 网络安全渗透测试学习平台</title>
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://unpkg.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self'; connect-src 'self' https://raw.githubusercontent.com; frame-src 'none'; object-src 'none'; base-uri 'self';" />
+  <title>sec-notebook — Web 安全学习笔记</title>
   <link rel="stylesheet" href="../css/common.css" />
+  <style>
+    /* 首页专属增强 */
+    .nb-hero {
+      min-height: 90vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+      padding: 6rem 0 4rem;
+    }
+    .nb-hero-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 3rem;
+      align-items: center;
+      max-width: var(--container-max);
+      margin: 0 auto;
+      padding: 0 var(--space-container);
+      position: relative;
+      z-index: 10;
+    }
+    .nb-hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.35rem 0.9rem;
+      background: rgba(6,182,212,0.1);
+      border: 1px solid rgba(6,182,212,0.25);
+      border-radius: var(--radius-full);
+      font-size: 0.8rem;
+      color: var(--color-accent-glow);
+      margin-bottom: 1.5rem;
+      font-family: var(--font-mono);
+    }
+    .nb-hero-badge .live-dot {
+      width: 7px; height: 7px;
+      background: var(--color-accent-emerald);
+      border-radius: 50%;
+      animation: pulse-glow 2s ease-in-out infinite;
+    }
+    .nb-hero h1 {
+      font-size: clamp(2.5rem, 6vw, 4.5rem);
+      font-weight: 900;
+      line-height: 1.08;
+      letter-spacing: -0.03em;
+      margin-bottom: 1.25rem;
+    }
+    .nb-hero h1 .hl {
+      background: linear-gradient(135deg, var(--color-accent-glow), var(--color-accent-purple));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .nb-hero p {
+      font-size: 1.1rem;
+      color: var(--color-text-secondary);
+      max-width: 520px;
+      line-height: 1.7;
+      margin-bottom: 2rem;
+    }
+    .nb-hero-actions {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    /* 右侧终端预览卡 */
+    .nb-terminal-card {
+      background: #0a0a0a;
+      border: 1px solid #1a1a1a;
+      border-radius: var(--radius-2xl);
+      overflow: hidden;
+      box-shadow: 0 30px 60px rgba(0,0,0,0.5), 0 0 30px rgba(34,211,238,0.08);
+    }
+    .nb-terminal-card .term-head {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1rem;
+      background: #111;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    .nb-terminal-card .term-dot { width: 10px; height: 10px; border-radius: 50%; }
+    .nb-terminal-card .term-dot--r { background: #ff5f56; }
+    .nb-terminal-card .term-dot--y { background: #ffbd2e; }
+    .nb-terminal-card .term-dot--g { background: #27c93f; }
+    .nb-terminal-card .term-title {
+      margin-left: 0.5rem;
+      font-size: 0.75rem;
+      color: #666;
+      font-family: var(--font-mono);
+    }
+    .nb-terminal-card .term-body {
+      padding: 1.25rem 1.5rem;
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      line-height: 1.9;
+      color: #a0a0a0;
+      max-height: 320px;
+      overflow-y: auto;
+    }
+    .nb-terminal-card .term-body .prompt { color: var(--color-accent-emerald); }
+    .nb-terminal-card .term-body .cmd { color: var(--color-accent-glow); }
+    .nb-terminal-card .term-body .hl-file { color: #fde047; }
+    .nb-terminal-card .term-body .dim { color: #555; }
+    /* 笔记卡片网格 */
+    .nb-notes-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.75rem;
+    }
+    @media (min-width: 769px) { .nb-notes-grid { grid-template-columns: repeat(3, 1fr); } }
+    @media (min-width: 1025px) { .nb-notes-grid { grid-template-columns: repeat(4, 1fr); } }
+    .nb-note-card {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.75rem 1rem;
+      background: rgba(255,255,255,0.02);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      text-decoration: none;
+      transition: all var(--duration-fast);
+      cursor: pointer;
+    }
+    .nb-note-card:hover {
+      background: rgba(6,182,212,0.06);
+      border-color: rgba(6,182,212,0.3);
+      box-shadow: 0 0 15px rgba(6,182,212,0.1);
+    }
+    .nb-note-card .nb-num {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: var(--color-text-muted);
+      min-width: 1.8em;
+    }
+    .nb-note-card .nb-icon { font-size: 1rem; flex-shrink: 0; }
+    .nb-note-card .nb-title {
+      font-size: 0.82rem;
+      color: var(--color-text-secondary);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .nb-note-card:hover .nb-title { color: var(--color-accent-glow); }
+    .nb-note-card .nb-arrow {
+      margin-left: auto;
+      color: var(--color-text-muted);
+      font-size: 0.7rem;
+      opacity: 0;
+      transition: opacity var(--duration-fast);
+    }
+    .nb-note-card:hover .nb-arrow { opacity: 1; color: var(--color-accent); }
+    /* 分类卡片 */
+    .nb-cat-card {
+      display: block;
+      padding: 1.5rem;
+      background: rgba(255,255,255,0.015);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-xl);
+      text-decoration: none;
+      transition: all var(--duration-normal);
+      position: relative;
+      overflow: hidden;
+    }
+    .nb-cat-card:hover {
+      background: rgba(255,255,255,0.03);
+      border-color: var(--border-strong);
+      box-shadow: var(--shadow-glow-cyan);
+    }
+    .nb-cat-card .nb-cat-icon { font-size: 2rem; margin-bottom: 0.75rem; }
+    .nb-cat-card h3 { font-size: 1.05rem; margin-bottom: 0.3rem; color: var(--color-text-primary); }
+    .nb-cat-card p { font-size: 0.8rem; color: var(--color-text-tertiary); margin: 0; }
+    .nb-cat-card .nb-cat-count {
+      position: absolute;
+      top: 1rem; right: 1rem;
+      font-family: var(--font-mono);
+      font-size: 1.5rem;
+      font-weight: 900;
+      color: var(--color-accent-glow);
+      opacity: 0.3;
+    }
+
+    @media (min-width: 769px) {
+      .nb-hero-grid { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
 </head>
 <body>
-  <!-- 跳过导航链接（无障碍） -->
   <a href="#main-content" class="skip-nav">跳到主要内容</a>
-
-  <!-- ========== Header 导航（由 components.js 动态注入）========== -->
   <header id="site-header" class="site-header"></header>
 
   <main id="main-content">
-    <!-- ========== Hero 首屏 ========== -->
-    <section class="hero">
+    <!-- ===== Hero ===== -->
+    <section class="nb-hero">
       <div class="hero-bg-orb hero-bg-orb--cyan"></div>
       <div class="hero-bg-orb hero-bg-orb--purple"></div>
-      <div class="hero-content">
-        <div class="hero-badge fade-in-up">
-          <span class="dot"></span> OWASP Top 10 漏洞知识库
+      <div class="nb-hero-grid">
+        <div>
+          <div class="nb-hero-badge fade-in-up">
+            <span class="live-dot"></span> GitHub 实时同步 · 19 篇笔记
+          </div>
+          <h1 class="fade-in-up fade-in-up--delay-1">
+            <span class="hl">sec-notebook</span>
+          </h1>
+          <p class="fade-in-up fade-in-up--delay-2">
+            Web 渗透测试学习笔记。从代理配置到 SQL 注入，
+            覆盖 19 个核心主题，基于 GitHub 仓库动态渲染 Markdown，
+            随时随地阅读最新版本。
+          </p>
+          <div class="nb-hero-actions fade-in-up fade-in-up--delay-3">
+            <a href="list.html" class="btn btn-primary btn-lg">📖 开始阅读</a>
+            <a href="about.html" class="btn btn-outline btn-lg">关于项目</a>
+          </div>
         </div>
-        <h1 class="fade-in-up fade-in-up--delay-1">
-          探索<span class="highlight"> Web 安全</span><br>构建防御思维
-        </h1>
-        <p class="fade-in-up fade-in-up--delay-2">
-          从攻击者视角理解 Web 漏洞，掌握渗透测试核心技能。
-          系统化学习 SQL 注入、XSS、CSRF、SSRF 等常见安全风险，
-          建立完整的安全攻防知识体系。
-        </p>
-        <div class="fade-in-up fade-in-up--delay-3">
-          <a href="list.html" class="btn btn-primary btn-lg">浏览漏洞库</a>
-          <a href="about.html" class="btn btn-outline btn-lg ml-1" style="margin-left: 1rem;">了解项目</a>
+        <div class="fade-in-up fade-in-up--delay-2">
+          <div class="nb-terminal-card">
+            <div class="term-head">
+              <span class="term-dot term-dot--r"></span>
+              <span class="term-dot term-dot--y"></span>
+              <span class="term-dot term-dot--g"></span>
+              <span class="term-title">sec-notebook ~ zsh</span>
+            </div>
+            <div class="term-body">
+              <div><span class="prompt">$</span> <span class="cmd">git clone sec-notebook</span></div>
+              <div><span class="dim">Cloning into 'sec-notebook'...</span></div>
+              <div style="margin-top:0.5rem"><span class="prompt">$</span> <span class="cmd">ls notes/</span></div>
+              <div><span class="hl-file">01</span> 代理配置和IP地址.md</div>
+              <div><span class="hl-file">02</span> web运行原理与操作系统.md</div>
+              <div><span class="hl-file">03</span> 快速搭建渗透测试环境.md</div>
+              <div><span class="dim">...</span></div>
+              <div><span class="hl-file">18</span> SQL注入.md</div>
+              <div><span class="hl-file">19</span> SQL注入利用方式.md</div>
+              <div style="margin-top:0.5rem"><span class="dim">19 files loaded</span></div>
+              <div><span class="prompt">$</span> <span class="cmd">marked --gfm *.md</span></div>
+              <div><span class="dim">Rendering with GFM + syntax highlighting...</span></div>
+              <div><span class="prompt">$</span> <span style="color:var(--color-accent-emerald);">▌</span></div>
+            </div>
+          </div>
         </div>
       </div>
     </section>
 
-    <!-- ========== 统计数据 ========== -->
-    <section class="section">
+    <!-- ===== 统计数据 ===== -->
+    <section class="section" style="padding-top:0">
       <div class="container">
-        <div class="grid grid-4" style="text-align: center;">
-          <div class="animate-on-scroll">
-            <div style="font-size: 2.5rem; font-weight: 900; color: var(--color-accent-glow);">10+</div>
-            <p style="font-size: 0.85rem; margin-top: 0.5rem;">漏洞类型覆盖</p>
+        <div class="grid grid-4" style="text-align:center">
+          <div class="card card-glass animate-on-scroll" style="padding:1.5rem">
+            <div style="font-size:2.5rem;font-weight:900;color:var(--color-accent-glow)">19</div>
+            <p style="font-size:0.82rem;margin-top:0.4rem;color:var(--color-text-tertiary)">篇系统笔记</p>
           </div>
-          <div class="animate-on-scroll">
-            <div style="font-size: 2.5rem; font-weight: 900; color: var(--color-accent-purple);">OWASP</div>
-            <p style="font-size: 0.85rem; margin-top: 0.5rem;">国际标准分类</p>
+          <div class="card card-glass animate-on-scroll" style="padding:1.5rem">
+            <div style="font-size:2.5rem;font-weight:900;color:var(--color-accent-purple)">GitHub</div>
+            <p style="font-size:0.82rem;margin-top:0.4rem;color:var(--color-text-tertiary)">开源数据源</p>
           </div>
-          <div class="animate-on-scroll">
-            <div style="font-size: 2.5rem; font-weight: 900; color: var(--color-accent-emerald);">4级</div>
-            <p style="font-size: 0.85rem; margin-top: 0.5rem;">严重度分级体系</p>
+          <div class="card card-glass animate-on-scroll" style="padding:1.5rem">
+            <div style="font-size:2.5rem;font-weight:900;color:var(--color-accent-emerald)">GFM</div>
+            <p style="font-size:0.82rem;margin-top:0.4rem;color:var(--color-text-tertiary)">Markdown 渲染</p>
           </div>
-          <div class="animate-on-scroll">
-            <div style="font-size: 2.5rem; font-weight: 900; color: var(--color-accent-fuchsia);">实战</div>
-            <p style="font-size: 0.85rem; margin-top: 0.5rem;">攻防演练案例</p>
+          <div class="card card-glass animate-on-scroll" style="padding:1.5rem">
+            <div style="font-size:2.5rem;font-weight:900;color:var(--color-accent-fuchsia)">⌨</div>
+            <p style="font-size:0.82rem;margin-top:0.4rem;color:var(--color-text-tertiary)">键盘快捷键</p>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- ========== Bento Grid 核心模块 ========== -->
+    <!-- ===== 全部笔记索引 ===== -->
+    <section class="section" style="padding-top:0">
+      <div class="container">
+        <h2 class="text-center mb-2">全部笔记</h2>
+        <p class="text-center mb-4" style="color:var(--color-text-tertiary);max-width:560px;margin-left:auto;margin-right:auto">
+          点击任意笔记跳转到阅读页面，支持 GitHub Flavored Markdown 渲染与代码高亮
+        </p>
+        <div class="nb-notes-grid">
+          <a class="nb-note-card" href="list.html#01%20%E4%BB%A3%E7%90%86%E9%85%8D%E7%BD%AE%E5%92%8CIP%E5%9C%B0%E5%9D%80.md">
+            <span class="nb-num">01</span><span class="nb-icon">🌐</span><span class="nb-title">代理配置和IP地址</span><span class="nb-arrow">→</span>
+          </a>
+          <a class="nb-note-card" href="list.html#02%20web%E8%BF%90%E8%A1%8C%E5%8E%9F%E7%90%86%E4%B8%8E%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F.md">
+            <span class="nb-num">02</span><span class="nb-icon">⚙️</span><span class="nb-title">web运行原理与操作系统</span><span class="nb-arrow">→</span>
+          </a>
+          <a class="nb-note-card" href="list.html#03.%E5%BF%AB%E9%80%9F%E6%90%AD%E5%BB%BA%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E7%8E%AF%E5%A2%83.md">
+            <span class="nb-num">03</span><span class="nb-icon">📖</span><span class="nb-title">快速搭建渗透测试环境</span><span class="nb-arrow">→</span>
+          </a>
+          <a class="nb-note-card" href="list.html#04.%E6%B8%97%E9%80%8F%E5%B8%B8%E8%A7%81%E7%9A%84DOS%E5%91%BD%E4%BB%A4.md">
+            <span class="nb-num">04</span><span class="nb-icon">⌨️</span><span class="nb-title">渗透常见的DOS命令</span><span class="nb-arrow">→</span>
+          </a>
+          <a class="nb-note-card" href="list.html#05.Linux%E5%9F%BA%E7%A1%80%E6%93%8D%E4%BD%9C%E4%B8%8E%E9%85%8D%E7%BD%AE.md">
+            <span class="nb-num">05</span><span class="nb-icon">🐧</span><span class="nb-title">Linux基础操作与配置</span><span class="nb-arrow">→</span>
+          </a>
+          <a class="nb-note-card" href="list.html#06.Linux%E7%94%A8%E6%88%B7%E6%9D%83%E9%99%90%E7%AE%A1%E7%90%86.md">
+            <span class="nb-num">06</span><span class="nb-icon">🛡️</span><span class="nb-title">Linux用户权限管理</span><span class="nb-arrow">→</span>
+          </a>
+          <a class="nb-note-card" href="list.html#07.Linux%E7%B3%BB%E7%BB%9F%E7%8A%B6%E6%80%81%E7%AE%A1%E7%90%86%E3%80%81%E5%AE%89%E5%85%A8%E5%8A%A0%E5%9B%BA.md">
+            <span class="nb-num">07</span><span class="nb-icon">📊</span><span class="nb-title">Linux系统状态管理、安全加固</span><span class="nb-arrow">→</span>
+          </a>
+          <a class="nb-note-card" href="list.html#08.Kali.md">
+            <span class="nb-num">08</span><span class="nb-icon">💻</span><span class="nb-title">Kali</span><span class="nb-arrow">→</span>
+          </a>
+          <a class="nb-note-card" href="list.html#09.%E6%8A%93%E5%8C%85%E5%B7%A5%E5%85%B7%E4%BB%8B%E7%BB%8D.md">
+            <span class="nb-num">09</span><span class="nb-icon">🔍</span><span class="nb-title">抓包工具介绍</span><span class="nb-arrow">→</span>
+          </a>
+          <a class="nb-note-card" href="list.html#10.http%E5%8D%8F%E8%AE%AE.md">
+            <span class="nb-num">10</span><span class="nb-icon">🌐</span><span class="nb-title">HTTP协议</span><span class="nb-arrow">→</span>
+          </a>
+          <a class="nb-note-card" href="list.html#11.BurpSuite%E8%AF%A6%E8%A7%A3.md">
+            <span class="nb-num">11</span><span class="nb-icon">🔍</span><span class="nb-title">BurpSuite详解</span><span class="nb-arrow">→</span>
+          </a>
+          <a class="nb-note-card" href="list.html#12.%E6%95%B0%E6%8D%AE%E4%BC%A0%E8%BE%93%E4%B8%8E%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95.md">
+            <span class="nb-num">12</span><span class="nb-icon">💎</span><span class="nb-title">数据传输与加密算法</span><span class="nb-arrow">→</span>
+          </a>
+          <a class="nb-note-card" href="list.html#13.%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86.md">
+            <span class="nb-num">13</span><span class="nb-icon">📋</span><span class="nb-title">信息收集</span><span class="nb-arrow">→</span>
+          </a>
+          <a class="nb-note-card" href="list.html#14.MySQL%E5%9F%BA%E7%A1%80.md">
+            <span class="nb-num">14</span><span class="nb-icon">🖥️</span><span class="nb-title">MySQL基础</span><span class="nb-arrow">→</span>
+          </a>
+          <a class="nb-note-card" href="list.html#15.PHP%E5%9F%BA%E7%A1%80.md">
+            <span class="nb-num">15</span><span class="nb-icon">🖥️</span><span class="nb-title">PHP基础</span><span class="nb-arrow">→</span>
+          </a>
+          <a class="nb-note-card" href="list.html#16.%E5%89%8D%E5%90%8E%E7%AB%AF%E4%BA%A4%E4%BA%92.md">
+            <span class="nb-num">16</span><span class="nb-icon">🔗</span><span class="nb-title">前后端交互</span><span class="nb-arrow">→</span>
+          </a>
+          <a class="nb-note-card" href="list.html#17.%E8%BA%AB%E4%BB%BD%E9%AA%8C%E8%AF%81%E5%8E%9F%E7%90%86.md">
+            <span class="nb-num">17</span><span class="nb-icon">🔑</span><span class="nb-title">身份验证原理</span><span class="nb-arrow">→</span>
+          </a>
+          <a class="nb-note-card" href="list.html#18.SQL%E6%B3%A8%E5%85%A5.md">
+            <span class="nb-num">18</span><span class="nb-icon">📋</span><span class="nb-title">SQL注入</span><span class="nb-arrow">→</span>
+          </a>
+          <a class="nb-note-card" href="list.html#19.SQL%E6%B3%A8%E5%85%A5%E5%88%A9%E7%94%A8%E6%96%B9%E5%BC%8F.md">
+            <span class="nb-num">19</span><span class="nb-icon">📋</span><span class="nb-title">SQL注入利用方式</span><span class="nb-arrow">→</span>
+          </a>
+        </div>
+        <div class="text-center mt-4">
+          <a href="list.html" class="btn btn-primary btn-lg">📖 进入阅读模式（支持键盘翻页）</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== 特性 Bento ===== -->
     <section class="section">
       <div class="container">
-        <h2 class="text-center mb-3">学习路径</h2>
-        <p class="text-center mb-4" style="color: var(--color-text-tertiary); max-width: 600px; margin-left: auto; margin-right: auto;">
-          从基础概念到实战技能，循序渐进的渗透测试学习之路
-        </p>
+        <h2 class="text-center mb-3">为什么用 sec-notebook？</h2>
         <div class="bento-grid">
-          <!-- 卡片 1: 注入攻击 -->
           <div class="bento-item animate-on-scroll">
-            <div class="card-icon" style="background: rgba(6,182,212,0.15);">🗄️</div>
-            <h3>注入类攻击</h3>
-            <p>SQL 注入、命令注入、XXE — 理解攻击者如何通过恶意输入操控后端系统。</p>
-            <div style="margin-top: 1rem;">
-              <span class="badge badge-red">严重</span>
-              <span class="badge badge-cyan" style="margin-left: 0.5rem;">OWASP A03</span>
-            </div>
+            <div class="card-icon" style="background:rgba(6,182,212,0.15)">📡</div>
+            <h3>GitHub 实时同步</h3>
+            <p>笔记托管于 GitHub 仓库，内容更新后站点自动同步最新版本，无需手动维护。</p>
           </div>
-
-          <!-- 卡片 2: 跨站脚本 -->
           <div class="bento-item animate-on-scroll">
-            <div class="card-icon" style="background: rgba(168,85,247,0.15);">💉</div>
-            <h3>跨站脚本 (XSS)</h3>
-            <p>反射型、存储型、DOM 型 XSS — 前端最常见也最容易被忽视的安全漏洞。</p>
-            <div style="margin-top: 1rem;">
-              <span class="badge badge-orange">高危</span>
-              <span class="badge badge-purple" style="margin-left: 0.5rem;">客户端安全</span>
-            </div>
+            <div class="card-icon" style="background:rgba(168,85,247,0.15)">🎨</div>
+            <h3>GFM 完整渲染</h3>
+            <p>支持 GitHub Flavored Markdown — 表格、任务列表、代码高亮、数学公式。</p>
           </div>
-
-          <!-- 卡片 3: 访问控制 -->
           <div class="bento-item animate-on-scroll">
-            <div class="card-icon" style="background: rgba(249,115,22,0.15);">🔑</div>
-            <h3>访问控制缺陷</h3>
-            <p>CSRF、IDOR、SSRF — 权限校验不当导致的数据泄露与越权操作。</p>
-            <div style="margin-top: 1rem;">
-              <span class="badge badge-orange">高危</span>
-              <span class="badge badge-orange" style="margin-left: 0.5rem;">OWASP A01</span>
-            </div>
+            <div class="card-icon" style="background:rgba(16,185,129,0.15)">⌨️</div>
+            <h3>键盘驱动阅读</h3>
+            <p>Ctrl+←→ 翻页、ESC 返回、URL Hash 保持位置，像用 Vim 一样阅读笔记。</p>
           </div>
-
-          <!-- 卡片 4: 文件操作 -->
           <div class="bento-item animate-on-scroll">
-            <div class="card-icon" style="background: rgba(239,68,68,0.15);">📂</div>
-            <h3>文件操作漏洞</h3>
-            <p>文件上传、路径遍历 — 攻击者获取服务器文件系统访问权限的常见方式。</p>
-            <div style="margin-top: 1rem;">
-              <span class="badge badge-red">严重</span>
-              <span class="badge badge-red" style="margin-left: 0.5rem;">文件安全</span>
+            <div class="card-icon" style="background:rgba(239,68,68,0.15)">⚡</div>
+            <h3>纯静态部署</h3>
+            <p>零后端、零数据库，Cloudflare Pages 全球 CDN 加速，永远免费。</p>
+          </div>
+          <!-- 宽卡片 -->
+          <div class="bento-item bento-item--wide animate-on-scroll" style="background:linear-gradient(135deg,rgba(6,182,212,0.04),rgba(168,85,247,0.04))">
+            <h3 style="margin-bottom:1rem">📋 学习路径推荐</h3>
+            <div class="grid grid-4" style="text-align:center">
+              <div><div style="font-size:1.8rem;margin-bottom:0.3rem">🔰</div><div style="font-weight:700;margin-bottom:0.2rem">基础入门</div><p style="font-size:0.78rem;color:var(--color-text-tertiary)">01-05 环境搭建与基础命令</p></div>
+              <div><div style="font-size:1.8rem;margin-bottom:0.3rem">🔧</div><div style="font-weight:700;margin-bottom:0.2rem">工具掌握</div><p style="font-size:0.78rem;color:var(--color-text-tertiary)">06-11 抓包与工具链</p></div>
+              <div><div style="font-size:1.8rem;margin-bottom:0.3rem">🧠</div><div style="font-weight:700;margin-bottom:0.2rem">核心理论</div><p style="font-size:0.78rem;color:var(--color-text-tertiary)">12-17 加密/数据库/认证</p></div>
+              <div><div style="font-size:1.8rem;margin-bottom:0.3rem">💥</div><div style="font-weight:700;margin-bottom:0.2rem">实战攻击</div><p style="font-size:0.78rem;color:var(--color-text-tertiary)">18-19 SQL注入实战</p></div>
             </div>
-          </div>
-
-          <!-- 宽卡片: 渗透测试流程 -->
-          <div class="bento-item bento-item--wide animate-on-scroll" style="background: linear-gradient(135deg, rgba(6,182,212,0.05), rgba(168,85,247,0.05));">
-            <h3 style="margin-bottom: 1.5rem;">渗透测试方法论</h3>
-            <div class="grid grid-4" style="text-align: center;">
-              <div>
-                <div style="font-size: 2rem; margin-bottom: 0.5rem;">🔍</div>
-                <div style="font-weight: 700; margin-bottom: 0.3rem;">信息收集</div>
-                <p style="font-size: 0.8rem;">子域名、端口、指纹</p>
-              </div>
-              <div>
-                <div style="font-size: 2rem; margin-bottom: 0.5rem;">🎯</div>
-                <div style="font-weight: 700; margin-bottom: 0.3rem;">漏洞扫描</div>
-                <p style="font-size: 0.8rem;">自动化+手动分析</p>
-              </div>
-              <div>
-                <div style="font-size: 2rem; margin-bottom: 0.5rem;">💥</div>
-                <div style="font-weight: 700; margin-bottom: 0.3rem;">漏洞利用</div>
-                <p style="font-size: 0.8rem;">POC编写与验证</p>
-              </div>
-              <div>
-                <div style="font-size: 2rem; margin-bottom: 0.5rem;">📋</div>
-                <div style="font-weight: 700; margin-bottom: 0.3rem;">报告输出</div>
-                <p style="font-size: 0.8rem;">风险评级与修复建议</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ========== 常用工具展示 ========== -->
-    <section class="section">
-      <div class="container">
-        <h2 class="text-center mb-3">常用渗透测试工具</h2>
-        <p class="text-center mb-4" style="color: var(--color-text-tertiary); max-width: 600px; margin-left: auto; margin-right: auto;">
-          行业标准工具，安全从业者的必备武器库
-        </p>
-        <div class="grid grid-3">
-          <div class="card card-glow-cyan animate-on-scroll">
-            <div class="card-icon" style="background: rgba(6,182,212,0.15);">🔍</div>
-            <h3>Burp Suite</h3>
-            <p>Web 安全测试的行业标准工具，支持代理拦截、爬虫、扫描、重放等完整功能。</p>
-            <span class="badge badge-cyan" style="margin-top: 0.75rem;">代理工具</span>
-          </div>
-          <div class="card card-glow-cyan animate-on-scroll">
-            <div class="card-icon" style="background: rgba(168,85,247,0.15);">🛡️</div>
-            <h3>Nmap</h3>
-            <p>网络发现与安全审计利器，支持主机发现、端口扫描、服务版本检测与操作系统指纹识别。</p>
-            <span class="badge badge-purple" style="margin-top: 0.75rem;">信息收集</span>
-          </div>
-          <div class="card card-glow-cyan animate-on-scroll">
-            <div class="card-icon" style="background: rgba(16,185,129,0.15);">⚡</div>
-            <h3>SQLMap</h3>
-            <p>自动化 SQL 注入检测与利用工具，支持多种数据库和注入技术，渗透测试必备。</p>
-            <span class="badge badge-green" style="margin-top: 0.75rem;">注入检测</span>
           </div>
         </div>
       </div>
     </section>
   </main>
 
-  <!-- ========== Footer 页脚（由 components.js 动态注入）========== -->
   <footer id="site-footer" class="site-footer"></footer>
 
   <script src="../js/components.js"></script>

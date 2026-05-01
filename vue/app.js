@@ -89,16 +89,6 @@ function setupMarked() {
     headerIds: true,
     mangle: false
   });
-  if (typeof hljs !== 'undefined') {
-    marked.setOptions({
-      highlight: function (code, lang) {
-        if (lang && hljs.getLanguage(lang)) {
-          try { return hljs.highlight(code, { language: lang }).value; } catch (e) {}
-        }
-        return code;
-      }
-    });
-  }
   return true;
 }
 

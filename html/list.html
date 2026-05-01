@@ -30,8 +30,7 @@
 
     <!-- ========== Vue3 学习笔记系统 ========== -->
     <div id="app">
-      <template id="app-template">
-        <div class="notes-layout">
+      <div class="notes-layout">
           <!-- ===== 移动端侧边栏切换按钮 ===== -->
           <button class="sidebar-toggle hide-desktop"
                   @click="showSidebar = !showSidebar"
@@ -188,17 +187,19 @@
             </div>
           </section>
         </div>
-      </template>
     </div>
   </main>
 
   <!-- ========== Footer（由 components.js 动态注入）========== -->
   <footer id="site-footer" class="site-footer"></footer>
 
-  <!-- 依赖库 -->
-  <script src="https://cdn.jsdelivr.net/npm/marked@15.0.7/marked.min.js" crossorigin="anonymous"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js" crossorigin="anonymous"></script>
-  <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js" crossorigin="anonymous"></script>
+  <!-- 依赖库（带 fallback） -->
+  <script src="https://cdn.jsdelivr.net/npm/marked@15.0.7/marked.min.js" crossorigin="anonymous"
+          onerror="this.onerror=null;this.src='https://unpkg.com/marked@15.0.7/marked.min.js'"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js" crossorigin="anonymous"
+          onerror="this.onerror=null;this.src='https://unpkg.com/highlight.js@11.11.1/highlight.min.js'"></script>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js" crossorigin="anonymous"
+          onerror="this.onerror=null;this.src='https://cdn.jsdelivr.net/npm/vue@3/dist/vue.global.prod.js'"></script>
   <!-- 项目脚本 -->
   <script src="../js/components.js"></script>
   <script src="../js/common.js"></script>
