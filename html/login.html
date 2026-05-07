@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self'; connect-src 'none'; frame-src 'none'; object-src 'none'; base-uri 'self';" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://unpkg.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self'; connect-src 'none'; frame-src 'none'; object-src 'none'; base-uri 'self';" />
   <title>安全实验室 — WebPenTest Lab</title>
   <link rel="stylesheet" href="../css/common.css" />
   <style>
@@ -103,9 +103,9 @@
 
       <div class="lab-card">
         <!-- 标签切换 -->
-        <div class="lab-tabs" role="tablist" aria-label="登录/注册">
-          <button class="lab-tab active" data-tab="login" role="tab" aria-selected="true" aria-controls="login-panel" id="tab-login">登录</button>
-          <button class="lab-tab" data-tab="register" role="tab" aria-selected="false" aria-controls="register-panel" id="tab-register" tabindex="-1">注册</button>
+        <div class="lab-tabs">
+          <button class="lab-tab active" data-tab="login">登录</button>
+          <button class="lab-tab" data-tab="register">注册</button>
         </div>
 
         <!-- 安全提示 -->

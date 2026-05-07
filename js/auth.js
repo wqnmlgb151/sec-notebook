@@ -12,36 +12,14 @@
   tabs.forEach(function (tab) {
     tab.addEventListener('click', function () {
       var target = this.getAttribute('data-tab');
-      tabs.forEach(function (t) {
-        t.classList.remove('active');
-        t.setAttribute('aria-selected', 'false');
-        t.setAttribute('tabindex', '-1');
-      });
+      tabs.forEach(function (t) { t.classList.remove('active'); });
       panels.forEach(function (p) { p.classList.remove('active'); });
       this.classList.add('active');
-      this.setAttribute('aria-selected', 'true');
-      this.removeAttribute('tabindex');
       var panelId = target === 'login' ? 'login-panel' : 'register-panel';
       document.getElementById(panelId).classList.add('active');
       // 面板切换后将焦点移到第一个输入框
       var firstInput = document.querySelector('#' + panelId + ' .form-input');
       if (firstInput) { setTimeout(function(){ firstInput.focus(); }, 50); }
-    });
-    // 键盘支持：左右箭头切换 Tab
-    tab.addEventListener('keydown', function (e) {
-      var idx = Array.prototype.indexOf.call(tabs, this);
-      var nextIdx = -1;
-      if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
-        e.preventDefault();
-        nextIdx = (idx + 1) % tabs.length;
-      } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
-        e.preventDefault();
-        nextIdx = (idx - 1 + tabs.length) % tabs.length;
-      }
-      if (nextIdx >= 0) {
-        tabs[nextIdx].click();
-        tabs[nextIdx].focus();
-      }
     });
   });
 

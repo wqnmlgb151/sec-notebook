@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self'; connect-src 'none'; frame-src 'none'; object-src 'none'; base-uri 'self';" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://unpkg.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self'; connect-src 'none'; frame-src 'none'; object-src 'none'; base-uri 'self';" />
   <title>漏洞详情 — WebPenTest Lab</title>
   <link rel="stylesheet" href="../css/common.css" />
 </head>
@@ -288,6 +288,21 @@
 
   <script src="../js/components.js"></script>
   <script src="../js/common.js"></script>
-  <script src="../js/detail.js"></script>
+  <script>
+    /* 读取 URL 参数 id，自动滚动到对应漏洞章节 */
+    (function () {
+      'use strict';
+      const params = new URLSearchParams(window.location.search);
+      const vulnId = params.get('id');
+      if (vulnId) {
+        const target = document.getElementById(vulnId);
+        if (target) {
+          setTimeout(function () {
+            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }, 300);
+        }
+      }
+    })();
+  </script>
 </body>
 </html>
