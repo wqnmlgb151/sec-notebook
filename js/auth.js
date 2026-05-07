@@ -11,15 +11,15 @@
 
   tabs.forEach(function (tab) {
     tab.addEventListener('click', function () {
-      const target = this.getAttribute('data-tab');
+      var target = this.getAttribute('data-tab');
       tabs.forEach(function (t) { t.classList.remove('active'); });
       panels.forEach(function (p) { p.classList.remove('active'); });
       this.classList.add('active');
-      if (target === 'login') {
-        document.getElementById('login-panel').classList.add('active');
-      } else {
-        document.getElementById('register-panel').classList.add('active');
-      }
+      var panelId = target === 'login' ? 'login-panel' : 'register-panel';
+      document.getElementById(panelId).classList.add('active');
+      // 面板切换后将焦点移到第一个输入框
+      var firstInput = document.querySelector('#' + panelId + ' .form-input');
+      if (firstInput) { setTimeout(function(){ firstInput.focus(); }, 50); }
     });
   });
 

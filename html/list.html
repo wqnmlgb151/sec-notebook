@@ -7,7 +7,8 @@
   <title>学习笔记 — WebPenTest Lab</title>
   <link rel="stylesheet" href="../css/common.css" />
   <!-- highlight.js 代码高亮主题 -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/atom-one-dark.min.css" crossorigin="anonymous" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/atom-one-dark.min.css"
+        crossorigin="anonymous" media="print" onload="this.media='all'" />
 </head>
 <body>
   <!-- 跳过导航链接（无障碍） -->
@@ -22,9 +23,9 @@
       <div class="hero-bg-orb hero-bg-orb--cyan" style="width:350px;height:350px;opacity:0.08;top:-5%;right:-5%"></div>
       <div class="hero-bg-orb hero-bg-orb--purple" style="width:250px;height:250px;opacity:0.06;bottom:0;left:-5%"></div>
       <div class="container">
-        <div class="breadcrumb">
+        <nav aria-label="面包屑导航"><div class="breadcrumb">
           <a href="index.html">首页</a><span class="sep">/</span><span>学习笔记</span>
-        </div>
+        </div></nav>
         <h1>Web 渗透测试<span class="highlight">笔记</span></h1>
         <p>动态抓取自 GitHub 仓库 — 计算机技术学习 / Web渗透测试</p>
       </div>
@@ -38,15 +39,15 @@
   <footer id="site-footer" class="site-footer"></footer>
 
   <!-- 依赖库（带 fallback） -->
-  <script src="https://cdn.jsdelivr.net/npm/marked@15.0.7/marked.min.js" crossorigin="anonymous"
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.2.4/purify.min.js" crossorigin="anonymous" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked@15.0.7/marked.min.js" crossorigin="anonymous" defer
           onerror="this.onerror=null;this.src='https://unpkg.com/marked@15.0.7/marked.min.js'"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js" crossorigin="anonymous"
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js" crossorigin="anonymous" defer
           onerror="this.onerror=null;this.src='https://unpkg.com/highlight.js@11.11.1/highlight.min.js'"></script>
-  <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js" crossorigin="anonymous"
+  <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js" crossorigin="anonymous" defer
           onerror="this.onerror=null;this.src='https://cdn.jsdelivr.net/npm/vue@3/dist/vue.global.prod.js'"></script>
-  <!-- 项目脚本 -->
-  <script src="../js/components.js"></script>
-  <script src="../js/common.js"></script>
-  <script src="../vue/app.js"></script>
+  <script src="../js/components.js" defer></script>
+  <script src="../js/common.js" defer></script>
+  <script src="../vue/app.js" defer></script>
 </body>
 </html>

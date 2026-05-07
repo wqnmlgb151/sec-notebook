@@ -107,6 +107,7 @@ function highlightCurrentNav() {
     // 匹配绝对路径 /html/xxx.html 或相对路径 xxx.html
     if (href && (href.indexOf(pageName) !== -1 || (pageName === 'index.html' && href.indexOf('index.html') !== -1))) {
       link.classList.add('active');
+      link.setAttribute('aria-current', 'page');
     }
   });
 }
@@ -149,7 +150,7 @@ function initScrollEffects() {
 }
 
 /* -------- Toast 消息系统 -------- */
-const Toast = {
+var Toast = {
   container: null,
 
   _ensureContainer: function () {
@@ -204,7 +205,7 @@ function initPasswordStrength() {
       barContainer.appendChild(bar);
     }
 
-    const STENGTH_LABELS = ['', '弱', '中', '强', '非常强'];
+    var STRENGTH_LABELS = ['', '弱', '中', '强', '非常强'];
     const strength = getPasswordStrength(val);
     bar.className = 'password-strength-bar';
     bar.style.width = '';
@@ -250,7 +251,7 @@ function getPasswordStrength(password) {
 }
 
 /* -------- 通用表单验证工具 -------- */
-const FormValidator = {
+var FormValidator = {
   rules: {
     required: function (value) {
       return value.trim() !== '' ? null : '此字段为必填项';

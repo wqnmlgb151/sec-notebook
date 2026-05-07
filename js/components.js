@@ -33,13 +33,13 @@ const HEADER_HTML = `
 /* -------- 共享 Footer 模板 -------- */
 const FOOTER_HTML = `
   <div class="container">
-    <div class="footer-links">
+    <nav aria-label="页脚导航"><div class="footer-links">
       <a href="/html/index.html">首页</a>
       <a href="/html/list.html">学习笔记</a>
       <a href="/html/detail.html">漏洞详情</a>
       <a href="/html/login.html">安全实验室</a>
       <a href="/html/about.html">关于项目</a>
-    </div>
+    </div></nav>
     <p class="copyright">
       &copy; ${new Date().getFullYear()} WebPenTest Lab. 仅用于教育学习目的，请勿用于非法用途。
     </p>

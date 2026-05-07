@@ -181,8 +181,10 @@ var PenTestApp = {
           return res.text();
         })
         .then(function(text){
-          if(typeof marked!=='undefined') renderedHTML.value = marked.parse(text);
-          else renderedHTML.value = '<pre>'+text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')+'</pre>';
+          if(typeof marked!=='undefined'){
+            var raw=marked.parse(text);
+            renderedHTML.value=(typeof DOMPurify!=='undefined')?DOMPurify.sanitize(raw):raw;
+          }else{renderedHTML.value='<pre>'+text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')+'</pre>';}
           isLoading.value = false;
           nextTick(function(){
             var c=document.querySelector('.content-area'); if(c)c.scrollTop=0;

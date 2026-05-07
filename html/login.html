@@ -92,13 +92,10 @@
   </style>
 </head>
 <body>
-  <!-- 跳过导航链接（无障碍） -->
   <a href="#main-content" class="skip-nav">跳到主要内容</a>
-
-  <!-- ========== Header（由 components.js 动态注入）========== -->
   <header id="site-header" class="site-header"></header>
-
   <main id="main-content">
+    <h1 class="sr-only">安全实验室 — 登录与注册</h1>
     <div class="lab-container">
       <!-- 背景光球 -->
       <div class="hero-bg-orb hero-bg-orb--cyan" style="width: 400px; height: 400px; opacity: 0.1;"></div>
@@ -140,7 +137,7 @@
               <label class="form-check">
                 <input type="checkbox" /> 记住我
               </label>
-              <a href="javascript:void(0)" style="font-size: 0.85rem;" role="button">忘记密码？</a>
+              <button type="button" class="link-btn">忘记密码？</button>
             </div>
             <button type="submit" class="btn btn-primary" style="width: 100%;">登录实验室</button>
           </form>
@@ -193,7 +190,7 @@
             </div>
             <div class="form-group">
               <label class="form-check">
-                <input type="checkbox" name="agree" id="reg-agree" /> 我已阅读并同意 <a href="javascript:void(0)" role="button">服务条款</a> 和 <a href="javascript:void(0)" role="button">隐私政策</a>
+                <input type="checkbox" name="agree" id="reg-agree" /> 我已阅读并同意 <button type="button" class="link-btn">服务条款</button> 和 <button type="button" class="link-btn">隐私政策</button>
               </label>
             </div>
             <button type="submit" class="btn btn-primary" style="width: 100%;">创建账号</button>
