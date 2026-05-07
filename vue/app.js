@@ -101,7 +101,7 @@ var AppTemplate = '' +
         '</div>' +
       '</nav>' +
       '<div class="sidebar-footer">' +
-        '<a :href="GITHUB_BASE" target="_blank" rel="noopener" class="sidebar-resource-link">📁 在 GitHub 查看全部资源</a>' +
+        '<a :href="GITHUB_BASE" target="_blank" rel="noopener noreferrer" class="sidebar-resource-link">📁 在 GitHub 查看全部资源</a>' +
       '</div>' +
     '</div>' +
   '</aside>' +
@@ -114,7 +114,7 @@ var AppTemplate = '' +
         '<div class="stat-card"><div class="stat-value">GitHub</div><div class="stat-label">数据源</div></div>' +
         '<div class="stat-card"><div class="stat-value">GFM</div><div class="stat-label">渲染引擎</div></div>' +
       '</div>' +
-      '<a :href="GITHUB_BASE" target="_blank" rel="noopener" class="btn btn-outline mt-3">在 GitHub 查看全部 →</a>' +
+      '<a :href="GITHUB_BASE" target="_blank" rel="noopener noreferrer" class="btn btn-outline mt-3">在 GitHub 查看全部 →</a>' +
     '</div>' +
     '<div v-if="isLoading" class="content-loading">' +
       '<div class="skeleton skeleton-title"></div>' +
@@ -138,7 +138,7 @@ var AppTemplate = '' +
           '<span class="content-toolbar-pos">{{currentIndex+1}} / {{files.length}}</span>' +
           '<button class="btn btn-ghost btn-sm" @click="goToNext()" :disabled="!hasNext" aria-label="下一篇">下一篇 →</button>' +
         '</div>' +
-        '<a :href="getGitHubUrl(sel)" target="_blank" rel="noopener" class="btn btn-outline btn-sm">在 GitHub 查看 ↗</a>' +
+        '<a :href="getGitHubUrl(sel)" target="_blank" rel="noopener noreferrer" class="btn btn-outline btn-sm">在 GitHub 查看 ↗</a>' +
       '</div>' +
       '<div class="content-file-header">' +
         '<span class="content-file-icon">{{sel.icon}}</span>' +
@@ -183,7 +183,12 @@ var PenTestApp = {
         .then(function(text){
           if(typeof marked!=='undefined'){
             var raw=marked.parse(text);
-            renderedHTML.value=(typeof DOMPurify!=='undefined')?DOMPurify.sanitize(raw):raw;
+            if(typeof DOMPurify!=='undefined'){
+              renderedHTML.value=DOMPurify.sanitize(raw);
+            }else{
+              // 安全回退：DOMPurify 不可用时对 HTML 进行实体编码
+              renderedHTML.value='<pre>'+raw.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')+'</pre>';
+            }
           }else{renderedHTML.value='<pre>'+text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')+'</pre>';}
           isLoading.value = false;
           nextTick(function(){
