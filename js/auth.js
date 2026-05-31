@@ -6,8 +6,8 @@
 
 (function () {
   // 标签切换
-  const tabs = document.querySelectorAll('.lab-tab');
-  const panels = document.querySelectorAll('.lab-panel');
+  var tabs = document.querySelectorAll('.lab-tab');
+  var panels = document.querySelectorAll('.lab-panel');
 
   tabs.forEach(function (tab) {
     tab.addEventListener('click', function () {
@@ -17,24 +17,30 @@
       this.classList.add('active');
       var panelId = target === 'login' ? 'login-panel' : 'register-panel';
       document.getElementById(panelId).classList.add('active');
-      // 面板切换后将焦点移到第一个输入框
       var firstInput = document.querySelector('#' + panelId + ' .form-input');
       if (firstInput) { setTimeout(function(){ firstInput.focus(); }, 50); }
     });
   });
 
+  function getFormInput(form, name) {
+    var input = form.querySelector('[name="' + name + '"]');
+    if (!input) { console.warn('[auth] 表单缺少字段:', name); }
+    return input;
+  }
+
   // 登录表单验证与提交
-  const loginForm = document.getElementById('login-form');
+  var loginForm = document.getElementById('login-form');
   if (loginForm) {
     loginForm.addEventListener('submit', function (e) {
       e.preventDefault();
-      const emailInput = this.querySelector('[name="email"]');
-      const passwordInput = this.querySelector('[name="password"]');
+      var emailInput = getFormInput(this, 'email');
+      var passwordInput = getFormInput(this, 'password');
+      if (!emailInput || !passwordInput) { return; }
 
-      const emailValid = FormValidator.validateField(emailInput, [
+      var emailValid = FormValidator.validateField(emailInput, [
         { rule: 'required' }, { rule: 'email' }
       ]);
-      const passValid = FormValidator.validateField(passwordInput, [
+      var passValid = FormValidator.validateField(passwordInput, [
         { rule: 'required' }
       ]);
 
@@ -46,43 +52,33 @@
   }
 
   // 注册表单验证与提交
-  const registerForm = document.getElementById('register-form');
+  var registerForm = document.getElementById('register-form');
   if (registerForm) {
     registerForm.addEventListener('submit', function (e) {
       e.preventDefault();
 
-      const usernameInput = this.querySelector('[name="username"]');
-      const emailInput = this.querySelector('[name="email"]');
-      const phoneInput = this.querySelector('[name="phone"]');
-      const passwordInput = this.querySelector('[name="password"]');
-      const confirmInput = this.querySelector('[name="confirm"]');
-      const agreeCheck = this.querySelector('[name="agree"]');
+      var usernameInput = getFormInput(this, 'username');
+      var emailInput = getFormInput(this, 'email');
+      var phoneInput = getFormInput(this, 'phone');
+      var passwordInput = getFormInput(this, 'password');
+      var confirmInput = getFormInput(this, 'confirm');
+      var agreeCheck = getFormInput(this, 'agree');
+      if (!usernameInput || !emailInput || !passwordInput || !confirmInput) { return; }
+
+      var fields = [
+        [usernameInput, [{ rule: 'required' }, { rule: 'minLength', param: 3 }]],
+        [emailInput,    [{ rule: 'required' }, { rule: 'email' }]],
+        [phoneInput,    [{ rule: 'required' }, { rule: 'phone' }]],
+        [passwordInput, [{ rule: 'required' }, { rule: 'password' }]],
+        [confirmInput,  [{ rule: 'match', param: passwordInput.value, fieldName: '密码' }]]
+      ];
 
       var valid = true;
+      for (var i = 0; i < fields.length; i++) {
+        valid = FormValidator.validateField(fields[i][0], fields[i][1]) && valid;
+      }
 
-      valid = FormValidator.validateField(usernameInput, [
-        { rule: 'required' }, { rule: 'minLength', param: 3 }
-      ]) && valid;
-
-      valid = FormValidator.validateField(emailInput, [
-        { rule: 'required' }, { rule: 'email' }
-      ]) && valid;
-
-      valid = FormValidator.validateField(phoneInput, [
-        { rule: 'required' }, { rule: 'phone' }
-      ]) && valid;
-
-      valid = FormValidator.validateField(passwordInput, [
-        { rule: 'required' }, { rule: 'password' }
-      ]) && valid;
-
-      // 密码一致性校验 — 复用 FormValidator.rules.match
-      valid = FormValidator.validateField(confirmInput, [
-        { rule: 'match', param: passwordInput.value, fieldName: '密码' }
-      ]) && valid;
-
-      // 同意条款
-      if (!agreeCheck.checked) {
+      if (agreeCheck && !agreeCheck.checked) {
         Toast.error('请先阅读并同意服务条款');
         valid = false;
       }
@@ -90,10 +86,9 @@
       if (valid) {
         Toast.success('注册成功！欢迎加入安全实验室(演示)');
         this.reset();
-        // 清除表单错误状态
         clearFormErrors(this);
-        // 切回登录标签
-        document.querySelector('.lab-tab[data-tab="login"]').click();
+        var loginTab = document.querySelector('.lab-tab[data-tab="login"]');
+        if (loginTab) { loginTab.click(); }
       }
     });
   }

@@ -215,16 +215,16 @@ function initPasswordStrength() {
       label = '';
     } else if (strength <= 1) {
       bar.classList.add('strength-weak');
-      label = STENGTH_LABELS[1];
+      label = STRENGTH_LABELS[1];
     } else if (strength === 2) {
       bar.classList.add('strength-medium');
-      label = STENGTH_LABELS[2];
+      label = STRENGTH_LABELS[2];
     } else if (strength === 3) {
       bar.classList.add('strength-strong');
-      label = STENGTH_LABELS[3];
+      label = STRENGTH_LABELS[3];
     } else {
       bar.classList.add('strength-very-strong');
-      label = STENGTH_LABELS[4];
+      label = STRENGTH_LABELS[4];
     }
     bar.setAttribute('aria-valuenow', strength);
     bar.setAttribute('aria-valuetext', label);
@@ -361,7 +361,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
       });
     } catch (e) {
-      // data-validate JSON 解析失败，静默跳过
+      console.warn('[FormValidator] data-validate JSON 解析失败:', input.name || input.id, e.message);
     }
   });
 });

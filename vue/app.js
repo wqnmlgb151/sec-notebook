@@ -173,9 +173,15 @@ var PenTestApp = {
     });
     var isLoading = ref(false), err = ref(null), showSidebar = ref(true);
 
+    var loadAbortController = null;
+
     function loadMarkdown(file) {
+      if (loadAbortController) { loadAbortController.abort(); }
+      loadAbortController = new AbortController();
+      var signal = loadAbortController.signal;
+
       sel.value = file; isLoading.value = true; err.value = null; renderedHTML.value = '';
-      fetch(file.downloadUrl)
+      fetch(file.downloadUrl, { signal: signal })
         .then(function(res){
           if(!res.ok){var m='文件加载失败';if(res.status===404)m='文件不存在';else if(res.status>=500)m='服务器错误，请稍后重试';throw new Error(m);}
           return res.text();
@@ -192,7 +198,11 @@ var PenTestApp = {
           });
           if(window.innerWidth<=768) showSidebar.value = false;
         })
-        .catch(function(e){err.value=e.message||'加载失败';isLoading.value=false;});
+        .catch(function(e){
+          if (e.name === 'AbortError') { return; }
+          err.value = e.message || '加载失败';
+          isLoading.value = false;
+        });
     }
 
     function selectFile(f){loadMarkdown(f);window.location.hash=encodeURIComponent(f.rawName);}
