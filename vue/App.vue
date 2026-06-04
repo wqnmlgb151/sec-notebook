@@ -170,7 +170,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue'
+import { ref, computed, watch, onMounted, onUnmounted, nextTick } from 'vue'
 import { marked } from 'marked'
 import DOMPurify from 'dompurify'
 import hljs from 'highlight.js'
@@ -180,6 +180,8 @@ import {
   fetchFileList,
   parseFileName
 } from './notes.js'
+
+const GITHUB_BASE = GITHUB_REPO_BASE
 
 const filesArr = FILE_LIST_FALLBACK.map(n => parseFileName(n))
 filesArr.sort((a, b) => a.num - b.num)
@@ -284,36 +286,26 @@ function onKeydown(e) {
   }
 }
 
-let hashCheckTimer = null
-
 onMounted(() => {
   marked.setOptions({ gfm: true, breaks: true, headerIds: true, mangle: false })
   document.addEventListener('keydown', onKeydown)
 
   const hash = window.location.hash.slice(1)
   if (hash) {
-    const d = decodeURIComponent(hash)
-    let a = 0
-    hashCheckTimer = setInterval(() => {
-      a++
-      if (files.value.length > 0) {
-        clearInterval(hashCheckTimer)
-        hashCheckTimer = null
-        const found = files.value.find(f => f.rawName === d)
+    const targetName = decodeURIComponent(hash)
+    const stopWatch = watch(files, (val) => {
+      if (val.length > 0) {
+        stopWatch()
+        const found = val.find(f => f.rawName === targetName)
         if (found) selectFile(found)
-      } else if (a >= 15) {
-        clearInterval(hashCheckTimer)
-        hashCheckTimer = null
       }
-    }, 100)
+    })
+    onUnmounted(() => { stopWatch() })
   }
 })
 
 onUnmounted(() => {
+  if (loadAbortController) { loadAbortController.abort() }
   document.removeEventListener('keydown', onKeydown)
-  if (hashCheckTimer) {
-    clearInterval(hashCheckTimer)
-    hashCheckTimer = null
-  }
 })
 </script>
