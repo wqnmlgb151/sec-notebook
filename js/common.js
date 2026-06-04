@@ -187,15 +187,16 @@ var Toast = {
 
 /* -------- 密码强度检测 -------- */
 function initPasswordStrength() {
-  const passwordInput = document.querySelector('.password-strength-input');
-  if (!passwordInput) { return; }
+  var passwordInput = document.querySelector('.password-strength-input');
+  var barContainer = document.querySelector('.password-strength');
+  if (!passwordInput || !barContainer) { return; }
+
+  var bar = null;
+  var textLabel = null;
+  var STRENGTH_LABELS = ['', '弱', '中', '强', '非常强'];
 
   passwordInput.addEventListener('input', function () {
-    const val = this.value;
-    const barContainer = document.querySelector('.password-strength');
-    if (!barContainer) { return; }
-
-    let bar = barContainer.querySelector('.password-strength-bar');
+    var val = this.value;
     if (!bar) {
       bar = document.createElement('div');
       bar.className = 'password-strength-bar';
@@ -204,15 +205,19 @@ function initPasswordStrength() {
       bar.setAttribute('aria-valuemax', '4');
       barContainer.appendChild(bar);
     }
+    if (!textLabel) {
+      textLabel = document.createElement('span');
+      textLabel.className = 'password-strength-text';
+      textLabel.style.cssText = 'font-size:0.75rem;color:var(--color-text-tertiary);margin-top:0.2rem;display:block;';
+      barContainer.appendChild(textLabel);
+    }
 
-    var STRENGTH_LABELS = ['', '弱', '中', '强', '非常强'];
-    const strength = getPasswordStrength(val);
+    var strength = getPasswordStrength(val);
     bar.className = 'password-strength-bar';
     bar.style.width = '';
     var label = '';
     if (val.length === 0) {
       bar.style.width = '0';
-      label = '';
     } else if (strength <= 1) {
       bar.classList.add('strength-weak');
       label = STRENGTH_LABELS[1];
@@ -228,14 +233,6 @@ function initPasswordStrength() {
     }
     bar.setAttribute('aria-valuenow', strength);
     bar.setAttribute('aria-valuetext', label);
-    // 更新或创建文本标签
-    var textLabel = barContainer.querySelector('.password-strength-text');
-    if (!textLabel) {
-      textLabel = document.createElement('span');
-      textLabel.className = 'password-strength-text';
-      textLabel.style.cssText = 'font-size:0.75rem;color:var(--color-text-tertiary);margin-top:0.2rem;display:block;';
-      barContainer.appendChild(textLabel);
-    }
     textLabel.textContent = label ? '密码强度: ' + label : '';
   });
 }

@@ -173,7 +173,24 @@
 import { ref, computed, watch, onMounted, onUnmounted, nextTick } from 'vue'
 import { marked } from 'marked'
 import DOMPurify from 'dompurify'
-import hljs from 'highlight.js'
+import hljs from 'highlight.js/lib/core'
+import javascript from 'highlight.js/lib/languages/javascript'
+import sql from 'highlight.js/lib/languages/sql'
+import php from 'highlight.js/lib/languages/php'
+import bash from 'highlight.js/lib/languages/bash'
+import python from 'highlight.js/lib/languages/python'
+import xml from 'highlight.js/lib/languages/xml'
+import json from 'highlight.js/lib/languages/json'
+import markdown from 'highlight.js/lib/languages/markdown'
+
+hljs.registerLanguage('javascript', javascript)
+hljs.registerLanguage('sql', sql)
+hljs.registerLanguage('php', php)
+hljs.registerLanguage('bash', bash)
+hljs.registerLanguage('python', python)
+hljs.registerLanguage('xml', xml)
+hljs.registerLanguage('json', json)
+hljs.registerLanguage('markdown', markdown)
 import {
   GITHUB_REPO_BASE,
   FILE_LIST_FALLBACK,
