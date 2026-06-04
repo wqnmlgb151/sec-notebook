@@ -251,6 +251,7 @@ function getPasswordStrength(password) {
 var FormValidator = {
   rules: {
     required: function (value) {
+      if (!value) { return '此字段为必填项'; }
       return value.trim() !== '' ? null : '此字段为必填项';
     },
     email: function (value) {
