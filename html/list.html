@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-eval' https://unpkg.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; img-src 'self' data: https:; font-src 'self'; connect-src 'self' https://raw.githubusercontent.com; frame-src 'none'; object-src 'none'; base-uri 'self';" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; img-src 'self' data: https:; font-src 'self'; connect-src 'self' https://raw.githubusercontent.com; frame-src 'none'; object-src 'none'; base-uri 'self';" />
   <title>学习笔记 — WebPenTest Lab</title>
   <link rel="stylesheet" href="../css/common.css" />
   <!-- highlight.js 代码高亮主题 -->
@@ -32,22 +32,14 @@
     </section>
 
     <!-- ========== Vue3 学习笔记系统 ========== -->
-    <div id="app"><!-- Vue 字符串模板渲染 --></div>
+    <div id="app"><!-- Vue SFC 渲染，入口: ../vue/main.js --></div>
   </main>
 
   <!-- ========== Footer（由 components.js 动态注入）========== -->
   <footer id="site-footer" class="site-footer"></footer>
 
-  <!-- 依赖库（带 fallback） -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.2.4/purify.min.js" crossorigin="anonymous" defer></script>
-  <script src="https://cdn.jsdelivr.net/npm/marked@15.0.7/marked.min.js" crossorigin="anonymous" defer
-          onerror="this.onerror=null;this.src='https://unpkg.com/marked@15.0.7/marked.min.js'"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js" crossorigin="anonymous" defer
-          onerror="this.onerror=null;this.src='https://unpkg.com/highlight.js@11.11.1/highlight.min.js'"></script>
-  <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js" crossorigin="anonymous" defer
-          onerror="this.onerror=null;this.src='https://cdn.jsdelivr.net/npm/vue@3/dist/vue.global.prod.js'"></script>
   <script src="../js/components.js" defer></script>
   <script src="../js/common.js" defer></script>
-  <script src="../vue/app.js" defer></script>
+  <script type="module" src="../vue/main.js"></script>
 </body>
 </html>
