@@ -44,12 +44,12 @@
               <div class="card card-glass" style="padding: 1.5rem;">
                 <h4 style="margin-bottom: 1rem; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--color-text-tertiary);">内容导航</h4>
                 <nav style="display: flex; flex-direction: column; gap: 0.4rem;">
-                  <a href="#sqli" style="color: var(--color-accent); font-size: 0.9rem;">SQL 注入</a>
-                  <a href="#xss" style="color: var(--color-text-tertiary); font-size: 0.9rem;">跨站脚本 (XSS)</a>
-                  <a href="#csrf" style="color: var(--color-text-tertiary); font-size: 0.9rem;">CSRF 攻击</a>
-                  <a href="#ssrf" style="color: var(--color-text-tertiary); font-size: 0.9rem;">SSRF 攻击</a>
-                  <a href="#file-upload" style="color: var(--color-text-tertiary); font-size: 0.9rem;">文件上传漏洞</a>
-                  <a href="#idor" style="color: var(--color-text-tertiary); font-size: 0.9rem;">IDOR 越权</a>
+                  <a href="#sqli" style="font-size: 0.9rem;">SQL 注入</a>
+                  <a href="#xss" style="font-size: 0.9rem;">跨站脚本 (XSS)</a>
+                  <a href="#csrf" style="font-size: 0.9rem;">CSRF 攻击</a>
+                  <a href="#ssrf" style="font-size: 0.9rem;">SSRF 攻击</a>
+                  <a href="#file-upload" style="font-size: 0.9rem;">文件上传漏洞</a>
+                  <a href="#idor" style="font-size: 0.9rem;">IDOR 越权</a>
                 </nav>
               </div>
             </div>
@@ -291,32 +291,43 @@
   <script src="../js/components.js"></script>
   <script src="../js/common.js"></script>
   <script>
-    /* 读取 URL 参数 id，自动滚动到对应漏洞章节 */
+    /* 侧边栏滚动高亮 + URL 参数跳转 */
     (function () {
       'use strict';
 
       var navLinks = document.querySelectorAll('.detail-sidebar nav a');
       if (!navLinks.length) return;
 
-      var activeLink = navLinks[0];
+      var articles = document.querySelectorAll('.detail-article');
+      if (!articles.length) return;
 
-      function highlight(link) {
-        if (activeLink) activeLink.style.color = 'var(--color-text-tertiary)';
-        link.style.color = 'var(--color-accent)';
+      // 构建 href 值 → 链接元素的映射
+      var linkMap = {};
+      for (var i = 0; i < navLinks.length; i++) {
+        var href = navLinks[i].getAttribute('href');
+        if (href && href.charAt(0) === '#') {
+          linkMap[href.slice(1)] = navLinks[i];
+        }
+      }
+
+      var activeLink = null;
+
+      function setActive(link) {
+        if (activeLink) activeLink.classList.remove('sidebar-active');
+        link.classList.add('sidebar-active');
         activeLink = link;
       }
 
       function updateHighlight() {
-        var articles = document.querySelectorAll('.detail-article');
+        // 找到最靠近视口顶部的 article：最后一个 top ≤ 偏移量的即为当前阅读区
         var current = articles[0];
-        // 从前往后找：最后一个顶部已滚过视口上方的即为当前阅读的 article
-        for (var i = 0; i < articles.length; i++) {
-          if (articles[i].getBoundingClientRect().top <= 150) {
-            current = articles[i];
+        for (var j = 0; j < articles.length; j++) {
+          if (articles[j].getBoundingClientRect().top <= 100) {
+            current = articles[j];
           }
         }
-        var link = document.querySelector('.detail-sidebar nav [href="#' + current.id + '"]');
-        if (link && link !== activeLink) highlight(link);
+        var link = linkMap[current.id];
+        if (link && link !== activeLink) setActive(link);
       }
 
       var ticking = false;
@@ -327,20 +338,21 @@
         }
       }, { passive: true });
 
-      // 页面加载后立即执行一次
+      // 初始高亮第一项，再根据滚动位置修正
+      setActive(navLinks[0]);
       updateHighlight();
 
       // URL 参数 ?id= 初始跳转
       var params = new URLSearchParams(window.location.search);
       var vulnId = params.get('id');
       if (vulnId) {
-        var initLink = document.querySelector('.detail-sidebar nav [href="#' + vulnId + '"]');
-        if (initLink) highlight(initLink);
-        var target = document.getElementById(vulnId);
-        if (target) {
-          setTimeout(function () {
+        var initLink = linkMap[vulnId];
+        if (initLink) {
+          setActive(initLink);
+          var target = document.getElementById(vulnId);
+          if (target) {
             target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          }, 300);
+          }
         }
       }
     })();
