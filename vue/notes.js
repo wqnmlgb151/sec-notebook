@@ -12,19 +12,18 @@ export const FILE_LIST_FALLBACK = [
 
 const API_URL = 'https://api.github.com/repos/wqnmlgb151/study/contents/%E8%AE%A1%E7%AE%97%E6%9C%BA%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0/web%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95'
 
-export function fetchFileList(callback) {
-  fetch(API_URL, { headers: { Accept: 'application/vnd.github.v3+json' } })
-    .then(res => {
-      if (!res.ok) throw new Error('API fail')
-      return res.json()
-    })
-    .then(data => {
-      const names = data
-        .filter(f => f.type === 'file' && f.name.toLowerCase().includes('.md'))
-        .map(f => f.name)
-      callback(names.length > 0 ? names : FILE_LIST_FALLBACK)
-    })
-    .catch(() => callback(FILE_LIST_FALLBACK))
+export async function fetchFileList() {
+  try {
+    const res = await fetch(API_URL, { headers: { Accept: 'application/vnd.github.v3+json' } })
+    if (!res.ok) throw new Error('API fail')
+    const data = await res.json()
+    const names = data
+      .filter(f => f.type === 'file' && f.name.toLowerCase().includes('.md'))
+      .map(f => f.name)
+    return names.length > 0 ? names : FILE_LIST_FALLBACK
+  } catch {
+    return FILE_LIST_FALLBACK
+  }
 }
 
 export function parseFileName(rawName) {
@@ -40,23 +39,26 @@ export function parseFileName(rawName) {
   }
 }
 
-function getIcon(t) {
-  t = t.toLowerCase()
-  if (t.includes('sql') || t.includes('注入')) return '🗄️'
-  if (t.includes('burp') || t.includes('代理') || t.includes('抓包')) return '🔍'
-  if (t.includes('kali') || t.includes('linux')) return '💻'
-  if (t.includes('dos') || t.includes('命令')) return '⌨️'
-  if (t.includes('http') || t.includes('协议')) return '🌐'
-  if (t.includes('认证') || t.includes('身份')) return '🔑'
-  if (t.includes('加密')) return '🔐'
-  if (t.includes('收集')) return '📋'
-  if (t.includes('基础') || t.includes('入门') || t.includes('搭建')) return '📖'
-  if (t.includes('工具')) return '🛠️'
-  if (t.includes('mysql') || t.includes('php')) return '🖥️'
-  if (t.includes('前后端') || t.includes('交互')) return '🔗'
-  if (t.includes('运行') || t.includes('操作系统')) return '⚙️'
-  if (t.includes('权限')) return '🛡️'
-  if (t.includes('状态') || t.includes('安全加固')) return '📊'
-  if (t.includes('数据传输') || t.includes('加密算法')) return '💎'
-  return '📝'
+const ICON_RULES = [
+  { keys: ['sql', '注入'], icon: '🗄️' },
+  { keys: ['burp', '代理', '抓包'], icon: '🔍' },
+  { keys: ['kali', 'linux'], icon: '💻' },
+  { keys: ['dos', '命令'], icon: '⌨️' },
+  { keys: ['http', '协议'], icon: '🌐' },
+  { keys: ['认证', '身份'], icon: '🔑' },
+  { keys: ['加密'], icon: '🔐' },
+  { keys: ['收集'], icon: '📋' },
+  { keys: ['基础', '入门', '搭建'], icon: '📖' },
+  { keys: ['工具'], icon: '🛠️' },
+  { keys: ['mysql', 'php'], icon: '🖥️' },
+  { keys: ['前后端', '交互'], icon: '🔗' },
+  { keys: ['运行', '操作系统'], icon: '⚙️' },
+  { keys: ['权限'], icon: '🛡️' },
+  { keys: ['状态', '安全加固'], icon: '📊' },
+  { keys: ['数据传输', '加密算法'], icon: '💎' }
+]
+
+function getIcon(title) {
+  const t = title.toLowerCase()
+  return ICON_RULES.find(r => r.keys.some(k => t.includes(k)))?.icon ?? '📝'
 }

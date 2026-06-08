@@ -42,7 +42,7 @@
         </nav>
 
         <div class="sidebar-footer">
-          <a :href="GITHUB_BASE" target="_blank" rel="noopener" class="sidebar-resource-link">
+          <a :href="GITHUB_REPO_BASE" target="_blank" rel="noopener" class="sidebar-resource-link">
             📁 在 GitHub 查看全部资源
           </a>
         </div>
@@ -76,7 +76,7 @@
               <div class="stat-label">渲染引擎</div>
             </div>
           </div>
-          <a :href="GITHUB_BASE" target="_blank" rel="noopener" class="btn btn-outline mt-3">
+          <a :href="GITHUB_REPO_BASE" target="_blank" rel="noopener" class="btn btn-outline mt-3">
             在 GitHub 查看全部 →
           </a>
         </div>
@@ -198,22 +198,23 @@ import {
   parseFileName
 } from './notes.js'
 
-const GITHUB_BASE = GITHUB_REPO_BASE
+marked.setOptions({ gfm: true, breaks: true, headerIds: true, mangle: false })
 
 const filesArr = FILE_LIST_FALLBACK.map(n => parseFileName(n))
 filesArr.sort((a, b) => a.num - b.num)
 
-const files = ref(filesArr)
+const files = ref([...filesArr])
 const sel = ref(null)
 const renderedHTML = ref('')
 const isDirLoading = ref(true)
 
-fetchFileList(liveNames => {
+;(async () => {
+  const liveNames = await fetchFileList()
   const arr = liveNames.map(n => parseFileName(n))
   arr.sort((a, b) => a.num - b.num)
   files.value = arr
   isDirLoading.value = false
-})
+})()
 
 const isLoading = ref(false)
 const err = ref(null)
@@ -304,7 +305,6 @@ function onKeydown(e) {
 }
 
 onMounted(() => {
-  marked.setOptions({ gfm: true, breaks: true, headerIds: true, mangle: false })
   document.addEventListener('keydown', onKeydown)
 
   const hash = window.location.hash.slice(1)

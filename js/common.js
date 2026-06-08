@@ -38,7 +38,7 @@ function initNavigation() {
     if (isActive) {
       // 将焦点移到导航第一个链接
       setTimeout(function () {
-        var firstLink = mainNav.querySelector('a');
+        const firstLink = mainNav.querySelector('a');
         if (firstLink) { firstLink.focus(); }
       }, 100);
     }
@@ -98,12 +98,12 @@ function initNavigation() {
 
 /* 高亮当前页面导航 */
 function highlightCurrentNav() {
-  var currentPath = window.location.pathname;
-  var pageName = currentPath.split('/').pop() || 'index.html';
+  const currentPath = window.location.pathname;
+  let pageName = currentPath.split('/').pop() || 'index.html';
   if (currentPath === '/' || pageName === '') { pageName = 'index.html'; }
-  var navLinks = document.querySelectorAll('.main-nav a');
+  const navLinks = document.querySelectorAll('.main-nav a');
   navLinks.forEach(function (link) {
-    var href = link.getAttribute('href');
+    const href = link.getAttribute('href');
     // 匹配绝对路径 /html/xxx.html 或相对路径 xxx.html
     if (href && (href.indexOf(pageName) !== -1 || (pageName === 'index.html' && href.indexOf('index.html') !== -1))) {
       link.classList.add('active');
@@ -121,7 +121,7 @@ function initScrollEffects() {
     rootMargin: '0px 0px -50px 0px'
   };
 
-  var observer = new IntersectionObserver(function (entries) {
+  const observer = new IntersectionObserver(function (entries) {
     entries.forEach(function (entry) {
       if (entry.isIntersecting) {
         entry.target.style.opacity = '1';
@@ -150,7 +150,7 @@ function initScrollEffects() {
 }
 
 /* -------- Toast 消息系统 -------- */
-var Toast = {
+const Toast = {
   container: null,
 
   _ensureContainer: function () {
@@ -165,7 +165,7 @@ var Toast = {
   },
 
   show: function (message, type) {
-    var typeSafe = type || 'info';
+    const typeSafe = type || 'info';
     this._ensureContainer();
     const toast = document.createElement('div');
     toast.className = 'toast toast-' + typeSafe;
@@ -187,16 +187,16 @@ var Toast = {
 
 /* -------- 密码强度检测 -------- */
 function initPasswordStrength() {
-  var passwordInput = document.querySelector('.password-strength-input');
-  var barContainer = document.querySelector('.password-strength');
+  const passwordInput = document.querySelector('.password-strength-input');
+  const barContainer = document.querySelector('.password-strength');
   if (!passwordInput || !barContainer) { return; }
 
-  var bar = null;
-  var textLabel = null;
-  var STRENGTH_LABELS = ['', '弱', '中', '强', '非常强'];
+  let bar = null;
+  let textLabel = null;
+  const STRENGTH_LABELS = ['', '弱', '中', '强', '非常强'];
 
   passwordInput.addEventListener('input', function () {
-    var val = this.value;
+    const val = this.value;
     if (!bar) {
       bar = document.createElement('div');
       bar.className = 'password-strength-bar';
@@ -212,10 +212,10 @@ function initPasswordStrength() {
       barContainer.appendChild(textLabel);
     }
 
-    var strength = getPasswordStrength(val);
+    const strength = getPasswordStrength(val);
     bar.className = 'password-strength-bar';
     bar.style.width = '';
-    var label = '';
+    let label = '';
     if (val.length === 0) {
       bar.style.width = '0';
     } else if (strength <= 1) {
@@ -248,7 +248,7 @@ function getPasswordStrength(password) {
 }
 
 /* -------- 通用表单验证工具 -------- */
-var FormValidator = {
+const FormValidator = {
   rules: {
     required: function (value) {
       if (!value) { return '此字段为必填项'; }
@@ -284,7 +284,7 @@ var FormValidator = {
    * @return {boolean}
    */
   validateField: function (input, validations) {
-    var errorId = input.id + '-error';
+    const errorId = input.id + '-error';
     let errorEl = input.parentElement.querySelector('.form-error');
     if (!errorEl) {
       errorEl = document.createElement('div');
