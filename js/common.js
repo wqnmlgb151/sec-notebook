@@ -208,7 +208,6 @@ function initPasswordStrength() {
     if (!textLabel) {
       textLabel = document.createElement('span');
       textLabel.className = 'password-strength-text';
-      textLabel.style.cssText = 'font-size:0.75rem;color:var(--color-text-tertiary);margin-top:0.2rem;display:block;';
       barContainer.appendChild(textLabel);
     }
 

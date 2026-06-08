@@ -489,6 +489,12 @@
 .strength-medium { width: 55%; background: var(--color-accent-orange); }
 .strength-strong { width: 80%; background: var(--color-accent); }
 .strength-very-strong { width: 100%; background: var(--color-accent-emerald); }
+.password-strength-text {
+  font-size: 0.75rem;
+  color: var(--color-text-tertiary);
+  margin-top: 0.2rem;
+  display: block;
+}
 
 /* -------- 页脚 -------- */
 .site-footer {
