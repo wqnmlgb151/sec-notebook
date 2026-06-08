@@ -69,16 +69,34 @@
   <script src="../js/common.js"></script>
   <script src="../js/vuln-data.js"></script>
   <script>
-    (function () {
+    window.addEventListener('DOMContentLoaded', function () {
       'use strict';
+
+      if (typeof VULNERABILITIES === 'undefined' || typeof renderVulnDetail === 'undefined') {
+        var c = document.getElementById('vuln-container');
+        if (c) c.innerHTML = '<div style="text-align:center;padding:4rem;color:var(--color-accent-red)"><p>脚本加载失败，请刷新页面重试</p></div>';
+        return;
+      }
 
       try {
         renderSidebarNav(VULNERABILITIES);
         renderVulnDetail('vuln-container');
       } catch (e) {
-        const c = document.getElementById('vuln-container');
-        if (c) c.innerHTML = '<div style="text-align:center;padding:4rem;color:var(--color-accent-red)"><p>渲染失败: ' + e.message + '</p></div>';
+        var c2 = document.getElementById('vuln-container');
+        if (c2) c2.innerHTML = '<div style="text-align:center;padding:4rem;color:var(--color-accent-red)"><p>渲染失败: ' + e.message + '</p></div>';
         console.error('[detail] 渲染失败:', e);
+      }
+
+      // 侧边栏初始高亮：若 URL 带 ?id=，高亮对应项；否则默认第一项
+      const params = new URLSearchParams(window.location.search);
+      const vulnId = params.get('id');
+      if (vulnId) {
+        const link = document.querySelector('#vuln-sidebar-nav [href="#' + vulnId + '"]');
+        if (link) {
+          const first = document.querySelector('#vuln-sidebar-nav a');
+          if (first) first.style.color = 'var(--color-text-tertiary)';
+          link.style.color = 'var(--color-accent)';
+        }
       }
 
       // 移动端侧边栏折叠
@@ -122,8 +140,6 @@
       }
 
       // URL 参数 id → 自动滚动
-      const params = new URLSearchParams(window.location.search);
-      const vulnId = params.get('id');
       if (vulnId) {
         const target = document.getElementById(vulnId);
         if (target) {
@@ -132,7 +148,7 @@
           }, 300);
         }
       }
-    })();
+    });
   </script>
   <noscript>
     <div style="text-align:center;padding:4rem 2rem;color:var(--color-text-secondary);">

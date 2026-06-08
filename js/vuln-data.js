@@ -4,7 +4,7 @@
    ============================================================ */
 'use strict';
 
-const RISK_MAP = {
+var RISK_MAP = {
   critical: { cls: 'risk-critical', label: '严重' },
   high:     { cls: 'risk-high', label: '高危' },
   medium:   { cls: 'risk-medium', label: '中危' },
@@ -12,7 +12,7 @@ const RISK_MAP = {
 };
 
 /* ===== 漏洞数据 ===== */
-const VULNERABILITIES = [
+var VULNERABILITIES = [
   {
     id: 'sqli',
     icon: '🗄️',

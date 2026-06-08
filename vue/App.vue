@@ -17,8 +17,11 @@
           </h3>
           <span class="sidebar-count">
             <template v-if="isDirLoading">同步中...</template>
-            <template v-else-if="preloadProgress.done < preloadProgress.total">
+            <template v-else-if="preloadProgress.done < preloadProgress.total && !preloadProgress.timedOut">
               缓存中 {{ preloadProgress.done }}/{{ preloadProgress.total }}
+            </template>
+            <template v-else-if="preloadProgress.timedOut">
+              已缓存 {{ preloadProgress.done }}/{{ preloadProgress.total }}
             </template>
             <template v-else>{{ files.length }} 篇 ✓</template>
           </span>
@@ -214,7 +217,7 @@ const isDirLoading = ref(true)
 const preloadProgress = ref({ done: 0, total: 0 })
 
 async function preloadNotes(list) {
-  preloadProgress.value = { done: 0, total: list.length }
+  preloadProgress.value = { done: 0, total: list.length, timedOut: false }
   const CONCURRENCY = 3
   const queue = [...list]
   async function worker() {
@@ -223,11 +226,16 @@ async function preloadNotes(list) {
       try {
         const res = await fetchWithTimeout(f.downloadUrl, null, 10000)
         if (res.ok) noteCache.set(f.rawName, await res.text())
-      } catch (_) { /* 静默跳过——预加载失败不影响使用 */ }
+      } catch (_) { /* 静默跳过 */ }
       preloadProgress.value = { ...preloadProgress.value, done: preloadProgress.value.done + 1 }
     }
   }
-  await Promise.all(Array.from({ length: CONCURRENCY }, () => worker()))
+  const workers = Array.from({ length: CONCURRENCY }, () => worker())
+  const timeout = new Promise(function (resolve) { setTimeout(resolve, 60000) })
+  await Promise.race([Promise.all(workers), timeout])
+  if (preloadProgress.value.done < preloadProgress.value.total) {
+    preloadProgress.value = { ...preloadProgress.value, timedOut: true }
+  }
 }
 
 ;(async () => {
