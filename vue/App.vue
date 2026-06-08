@@ -220,9 +220,23 @@ const isLoading = ref(false)
 const err = ref(null)
 const showSidebar = ref(true)
 
+const noteCache = new Map()
+const FETCH_TIMEOUT = 15000  // 单次请求超时 15s
+
+function fetchWithTimeout(url, signal, timeoutMs) {
+  return new Promise((resolve, reject) => {
+    const timer = setTimeout(() => {
+      reject(new DOMException('请求超时', 'TimeoutError'))
+    }, timeoutMs)
+    fetch(url, { signal })
+      .then(res => { clearTimeout(timer); resolve(res) })
+      .catch(e => { clearTimeout(timer); reject(e) })
+  })
+}
+
 let loadAbortController = null
 
-function loadMarkdown(file) {
+async function loadMarkdown(file, isRetry) {
   if (loadAbortController) loadAbortController.abort()
   loadAbortController = new AbortController()
   const { signal } = loadAbortController
@@ -232,32 +246,58 @@ function loadMarkdown(file) {
   err.value = null
   renderedHTML.value = ''
 
-  fetch(file.downloadUrl, { signal })
-    .then(res => {
-      if (!res.ok) {
-        let m = '文件加载失败'
-        if (res.status === 404) m = '文件不存在'
-        else if (res.status >= 500) m = '服务器错误，请稍后重试'
-        throw new Error(m)
+  // 命中缓存：直接渲染
+  if (noteCache.has(file.rawName)) {
+    const text = noteCache.get(file.rawName)
+    renderedHTML.value = DOMPurify.sanitize(marked.parse(text))
+    isLoading.value = false
+    nextTick(() => {
+      const c = document.querySelector('.content-area')
+      if (c) c.scrollTop = 0
+      hljs.highlightAll()
+    })
+    if (window.innerWidth <= 768) showSidebar.value = false
+    return
+  }
+
+  try {
+    const res = await fetchWithTimeout(file.downloadUrl, signal, FETCH_TIMEOUT)
+    if (!res.ok) {
+      let m = '文件加载失败'
+      if (res.status === 404) m = '文件不存在'
+      else if (res.status === 403) m = 'GitHub API 限流，请稍后重试'
+      else if (res.status >= 500) m = 'GitHub 服务器错误，请稍后重试'
+      throw new Error(m)
+    }
+    const text = await res.text()
+    noteCache.set(file.rawName, text)
+    renderedHTML.value = DOMPurify.sanitize(marked.parse(text))
+    isLoading.value = false
+    nextTick(() => {
+      const c = document.querySelector('.content-area')
+      if (c) c.scrollTop = 0
+      hljs.highlightAll()
+    })
+    if (window.innerWidth <= 768) showSidebar.value = false
+  } catch (e) {
+    if (e.name === 'AbortError') return
+
+    // 超时自动重试一次
+    if (e.name === 'TimeoutError' || e.message === '请求超时') {
+      if (!isRetry) {
+        isLoading.value = false
+        err.value = '首次请求超时，正在自动重试...'
+        loadAbortController = null
+        return loadMarkdown(file, true)
       }
-      return res.text()
-    })
-    .then(text => {
-      const raw = marked.parse(text)
-      renderedHTML.value = DOMPurify.sanitize(raw)
-      isLoading.value = false
-      nextTick(() => {
-        const c = document.querySelector('.content-area')
-        if (c) c.scrollTop = 0
-        hljs.highlightAll()
-      })
-      if (window.innerWidth <= 768) showSidebar.value = false
-    })
-    .catch(e => {
-      if (e.name === 'AbortError') return
+      err.value = 'GitHub 连接超时，请检查网络或使用 VPN 后重试'
+    } else if (e.message && e.message.includes('Failed to fetch')) {
+      err.value = '网络连接失败，请检查网络后重试'
+    } else {
       err.value = e.message || '加载失败'
-      isLoading.value = false
-    })
+    }
+    isLoading.value = false
+  }
 }
 
 function selectFile(f) {
