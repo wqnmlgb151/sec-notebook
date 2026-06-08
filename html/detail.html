@@ -310,11 +310,20 @@
         }
       }
 
+      // 先将所有侧边栏链接初始化为暗色（覆盖全局 a { color: accent }）
+      for (var k = 0; k < navLinks.length; k++) {
+        navLinks[k].style.color = 'var(--color-text-tertiary)';
+      }
+
       var activeLink = null;
 
       function setActive(link) {
-        if (activeLink) activeLink.classList.remove('sidebar-active');
+        if (activeLink) {
+          activeLink.classList.remove('sidebar-active');
+          activeLink.style.color = 'var(--color-text-tertiary)';
+        }
         link.classList.add('sidebar-active');
+        link.style.color = 'var(--color-accent)';
         activeLink = link;
       }
 
