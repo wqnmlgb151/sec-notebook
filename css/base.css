@@ -240,15 +240,6 @@ code {
 .detail-sidebar { display: none; }
 .detail-sidebar.open { display: block; }
 
-/* 侧边栏导航高亮 */
-.detail-sidebar nav a {
-  color: var(--color-text-tertiary);
-  transition: color var(--duration-fast);
-}
-.detail-sidebar nav a.sidebar-active {
-  color: var(--color-accent);
-}
-
 /* 移动端侧边栏切换按钮 */
 .detail-sidebar-toggle {
   width: 100%;
