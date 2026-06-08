@@ -255,6 +255,8 @@ async function loadMarkdown(file, isRetry) {
       const c = document.querySelector('.content-area')
       if (c) c.scrollTop = 0
       hljs.highlightAll()
+      const active = document.querySelector('.sidebar-item.active')
+      if (active) active.scrollIntoView({ block: 'nearest', behavior: 'smooth' })
     })
     if (window.innerWidth <= 768) showSidebar.value = false
     return
@@ -277,6 +279,8 @@ async function loadMarkdown(file, isRetry) {
       const c = document.querySelector('.content-area')
       if (c) c.scrollTop = 0
       hljs.highlightAll()
+      const active = document.querySelector('.sidebar-item.active')
+      if (active) active.scrollIntoView({ block: 'nearest', behavior: 'smooth' })
     })
     if (window.innerWidth <= 768) showSidebar.value = false
   } catch (e) {

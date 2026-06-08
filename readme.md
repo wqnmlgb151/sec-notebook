@@ -192,11 +192,13 @@ start html/index.html
 
 ### 2026-06-08
 - **CSS 架构重构**：1570 行单文件拆分为 4 层模块（tokens → base → components → notes），全部 < 800 行
-- **detail.html 数据驱动化**：6 个硬编码漏洞 article → `vuln-data.js` 数据数组 + DOM 动态渲染，页面对半精简
-- **JS 代码质量提升**：`common.js` 19 处 `var` → `const`/`let`；`notes.js` `getIcon()` 17 层 if-else → 查表法；`fetchFileList()` 回调 → async/await
+- **detail.html 数据驱动化**：6 个硬编码漏洞 article → `vuln-data.js` 数据数组 + DOM 动态渲染（309 → 86 行）
+- **JS 代码质量提升**：`common.js` 19 处 `var` → `const`/`let`；`notes.js` `getIcon()` 17 层 if-else → 查表法；`fetchFileList()` 回调 → async/await；删除死令牌 `--color-accent-fuchsia`
+- **笔记加载稳定性**：添加 15s 超时 + 内存缓存 + 自动重试 + 精确错误分类（超时/网络/限流/404/500）
+- **侧边栏体验**：切换笔记后侧边栏自动滚动到当前项
 - **inline style 清理**：`detail.html` 71 → 35 处，新增 7 个语义化 CSS 类
-- **CSP 收紧**：`list.html` 移除 `script-src 'unsafe-inline'`
-- **设计令牌独立**：`tokens.css` 单独文件，换主题只改一处
+- **CSP 安全加固**：5 个页面全部按最小权限收紧——移除未使用的 CDN 白名单（unpkg/jsdelivr/cdnjs）；`list.html` 移除 `'unsafe-inline'` 并修复 `api.github.com` 缺失；`index.html` 显式 `connect-src 'none'`
+- **无障碍**：`detail.html` 添加 `<noscript>` 降级提示
 
 ### 2026-05-01
 - 新增 GitHub 动态抓取 Markdown 学习笔记系统
