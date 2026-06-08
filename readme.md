@@ -199,6 +199,9 @@ start html/index.html
 - **inline style 清理**：`detail.html` 71 → 35 处，新增 7 个语义化 CSS 类
 - **CSP 安全加固**：5 个页面全部按最小权限收紧——移除未使用的 CDN 白名单（unpkg/jsdelivr/cdnjs）；`list.html` 移除 `'unsafe-inline'` 并修复 `api.github.com` 缺失；`index.html` 显式 `connect-src 'none'`
 - **无障碍**：`detail.html` 添加 `<noscript>` 降级提示
+- **答辩离线可用**：打开页面后自动后台预加载全部 19 篇笔记到缓存（3 并发），侧边栏显示缓存进度；完成后断网也能瞬间读取任意笔记
+- **detail.html 侧边栏**：移动端折叠按钮 + IntersectionObserver 滚动高亮同步（滚动时侧边栏自动跟踪当前文章）
+- **样式清理**：`.password-strength-text` 内联样式移至 CSS 类定义
 
 ### 2026-05-01
 - 新增 GitHub 动态抓取 Markdown 学习笔记系统

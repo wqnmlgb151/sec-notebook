@@ -34,11 +34,17 @@
 
     <section class="section" style="padding-top: 0;">
       <div class="container">
+
+        <!-- 移动端侧边栏折叠按钮 -->
+        <button class="detail-sidebar-toggle hide-desktop" id="detail-sidebar-btn">
+          📋 内容导航
+        </button>
+
         <!-- 侧边栏 + 主内容布局 (PC端) -->
         <div class="detail-layout">
 
           <!-- 侧边栏导航（由 vuln-data.js 动态渲染） -->
-          <aside class="detail-sidebar">
+          <aside class="detail-sidebar" id="detail-sidebar">
             <div style="position: sticky; top: 100px;">
               <div class="card card-glass" style="padding: 1.5rem;">
                 <h4 style="margin-bottom: 1rem; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--color-text-tertiary);">内容导航</h4>
@@ -63,13 +69,59 @@
   <script src="../js/common.js"></script>
   <script src="../js/vuln-data.js"></script>
   <script>
-    /* 数据驱动渲染漏洞详情 + 侧边栏导航 */
     (function () {
       'use strict';
-      renderSidebarNav(VULNERABILITIES);
-      renderVulnDetail('vuln-container');
 
-      /* 读取 URL 参数 id，自动滚动到对应漏洞章节 */
+      try {
+        renderSidebarNav(VULNERABILITIES);
+        renderVulnDetail('vuln-container');
+      } catch (e) {
+        const c = document.getElementById('vuln-container');
+        if (c) c.innerHTML = '<div style="text-align:center;padding:4rem;color:var(--color-accent-red)"><p>渲染失败: ' + e.message + '</p></div>';
+        console.error('[detail] 渲染失败:', e);
+      }
+
+      // 移动端侧边栏折叠
+      const btn = document.getElementById('detail-sidebar-btn');
+      const sidebar = document.getElementById('detail-sidebar');
+      if (btn && sidebar) {
+        btn.addEventListener('click', function () {
+          sidebar.classList.toggle('open');
+          btn.textContent = sidebar.classList.contains('open') ? '✕ 关闭导航' : '📋 内容导航';
+        });
+        sidebar.addEventListener('click', function (e) {
+          if (e.target.tagName === 'A' && window.innerWidth < 1025) {
+            sidebar.classList.remove('open');
+            btn.textContent = '📋 内容导航';
+          }
+        });
+      }
+
+      // 侧边栏滚动高亮同步
+      const articles = document.querySelectorAll('.detail-article');
+      if (articles.length && 'IntersectionObserver' in window) {
+        let activeLink = null;
+        const observer = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+              // 移除旧高亮
+              if (activeLink) {
+                activeLink.style.color = 'var(--color-text-tertiary)';
+              }
+              // 找到对应链接并高亮（O(1) 属性选择器）
+              const link = document.querySelector('#vuln-sidebar-nav [href="#' + entry.target.id + '"]');
+              if (link) {
+                link.style.color = 'var(--color-accent)';
+                activeLink = link;
+              }
+            }
+          });
+        }, { rootMargin: '-20% 0px -60% 0px', threshold: 0 });
+
+        articles.forEach(function (el) { observer.observe(el); });
+      }
+
+      // URL 参数 id → 自动滚动
       const params = new URLSearchParams(window.location.search);
       const vulnId = params.get('id');
       if (vulnId) {

@@ -238,6 +238,29 @@ code {
   gap: 2rem;
 }
 .detail-sidebar { display: none; }
+.detail-sidebar.open { display: block; }
+
+/* 移动端侧边栏切换按钮 */
+.detail-sidebar-toggle {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
+  background: rgba(15, 23, 42, 0.9);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  color: var(--color-text-secondary);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all var(--duration-fast);
+}
+.detail-sidebar-toggle:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent-glow);
+}
 
 /* 平板: 769px–1024px */
 @media (min-width: 769px) and (max-width: 1024px) {

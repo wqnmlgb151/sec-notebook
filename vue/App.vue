@@ -16,7 +16,11 @@
             <span style="font-size: 1.2rem">📚</span> 课程目录
           </h3>
           <span class="sidebar-count">
-            {{ isDirLoading ? '同步中...' : files.length + ' 篇' }}
+            <template v-if="isDirLoading">同步中...</template>
+            <template v-else-if="preloadProgress.done < preloadProgress.total">
+              缓存中 {{ preloadProgress.done }}/{{ preloadProgress.total }}
+            </template>
+            <template v-else>{{ files.length }} 篇 ✓</template>
           </span>
         </div>
 
@@ -207,6 +211,24 @@ const files = ref([...filesArr])
 const sel = ref(null)
 const renderedHTML = ref('')
 const isDirLoading = ref(true)
+const preloadProgress = ref({ done: 0, total: 0 })
+
+async function preloadNotes(list) {
+  preloadProgress.value = { done: 0, total: list.length }
+  const CONCURRENCY = 3
+  const queue = [...list]
+  async function worker() {
+    while (queue.length) {
+      const f = queue.shift()
+      try {
+        const res = await fetchWithTimeout(f.downloadUrl, null, 10000)
+        if (res.ok) noteCache.set(f.rawName, await res.text())
+      } catch (_) { /* 静默跳过——预加载失败不影响使用 */ }
+      preloadProgress.value = { ...preloadProgress.value, done: preloadProgress.value.done + 1 }
+    }
+  }
+  await Promise.all(Array.from({ length: CONCURRENCY }, () => worker()))
+}
 
 ;(async () => {
   const liveNames = await fetchFileList()
@@ -214,6 +236,7 @@ const isDirLoading = ref(true)
   arr.sort((a, b) => a.num - b.num)
   files.value = arr
   isDirLoading.value = false
+  preloadNotes(arr)  // 后台静默预加载全部笔记
 })()
 
 const isLoading = ref(false)
