@@ -240,6 +240,24 @@ code {
 .detail-sidebar { display: none; }
 .detail-sidebar.open { display: block; }
 
+.detail-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.detail-nav-link {
+  color: var(--color-text-tertiary);
+  font-size: 0.9rem;
+  transition: color var(--duration-fast);
+}
+.detail-nav-link:hover,
+.detail-nav-link.is-active {
+  color: var(--color-accent);
+}
+.detail-article {
+  scroll-margin-top: 100px;
+}
+
 /* 移动端侧边栏切换按钮 */
 .detail-sidebar-toggle {
   width: 100%;

@@ -43,13 +43,13 @@
             <div style="position: sticky; top: 100px;">
               <div class="card card-glass" style="padding: 1.5rem;">
                 <h4 style="margin-bottom: 1rem; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--color-text-tertiary);">内容导航</h4>
-                <nav style="display: flex; flex-direction: column; gap: 0.4rem;">
-                  <a href="#sqli" style="color: var(--color-accent); font-size: 0.9rem;">SQL 注入</a>
-                  <a href="#xss" style="color: var(--color-text-tertiary); font-size: 0.9rem;">跨站脚本 (XSS)</a>
-                  <a href="#csrf" style="color: var(--color-text-tertiary); font-size: 0.9rem;">CSRF 攻击</a>
-                  <a href="#ssrf" style="color: var(--color-text-tertiary); font-size: 0.9rem;">SSRF 攻击</a>
-                  <a href="#file-upload" style="color: var(--color-text-tertiary); font-size: 0.9rem;">文件上传漏洞</a>
-                  <a href="#idor" style="color: var(--color-text-tertiary); font-size: 0.9rem;">IDOR 越权</a>
+                <nav class="detail-nav">
+                  <a href="#sqli" class="detail-nav-link is-active">SQL 注入</a>
+                  <a href="#xss" class="detail-nav-link">跨站脚本 (XSS)</a>
+                  <a href="#csrf" class="detail-nav-link">CSRF 攻击</a>
+                  <a href="#ssrf" class="detail-nav-link">SSRF 攻击</a>
+                  <a href="#file-upload" class="detail-nav-link">文件上传漏洞</a>
+                  <a href="#idor" class="detail-nav-link">IDOR 越权</a>
                 </nav>
               </div>
             </div>
@@ -290,58 +290,6 @@
 
   <script src="../js/components.js"></script>
   <script src="../js/common.js"></script>
-  <script>
-    /* 侧边栏滚动高亮 + URL 参数跳转 */
-    (function () {
-      'use strict';
-
-      var navLinks = document.querySelectorAll('.detail-sidebar nav a');
-      if (!navLinks.length) return;
-
-      var articles = document.querySelectorAll('.detail-article');
-      if (!articles.length) return;
-
-      var activeLink = navLinks[0];
-
-      function highlight(link) {
-        if (activeLink) activeLink.style.color = 'var(--color-text-tertiary)';
-        link.style.color = 'var(--color-accent)';
-        activeLink = link;
-      }
-
-      function updateHighlight() {
-        var current = articles[0];
-        for (var i = 0; i < articles.length; i++) {
-          if (articles[i].getBoundingClientRect().top <= 120) {
-            current = articles[i];
-          }
-        }
-        var link = document.querySelector('.detail-sidebar nav [href="#' + current.id + '"]');
-        if (link && link !== activeLink) highlight(link);
-      }
-
-      var ticking = false;
-      window.addEventListener('scroll', function () {
-        if (!ticking) {
-          requestAnimationFrame(function () { updateHighlight(); ticking = false; });
-          ticking = true;
-        }
-      }, { passive: true });
-
-      updateHighlight();
-
-      // URL 参数 ?id= 初始跳转
-      var params = new URLSearchParams(window.location.search);
-      var vulnId = params.get('id');
-      if (vulnId) {
-        var initLink = document.querySelector('.detail-sidebar nav [href="#' + vulnId + '"]');
-        if (initLink) highlight(initLink);
-        var target = document.getElementById(vulnId);
-        if (target) {
-          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
-      }
-    })();
-  </script>
+  <script src="../js/detail.js"></script>
 </body>
 </html>
