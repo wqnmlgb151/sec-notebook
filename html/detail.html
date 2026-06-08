@@ -300,31 +300,25 @@
 
       var activeLink = navLinks[0];
 
-      // 高亮指定链接
       function highlight(link) {
         if (activeLink) activeLink.style.color = 'var(--color-text-tertiary)';
         link.style.color = 'var(--color-accent)';
         activeLink = link;
       }
 
-      // 根据当前滚动位置找最接近顶部的 article
       function updateHighlight() {
-        var best = null;
-        var bestTop = Infinity;
         var articles = document.querySelectorAll('.detail-article');
-        articles.forEach(function (a) {
-          var top = a.getBoundingClientRect().top;
-          if (top < window.innerHeight * 0.5 && top > -a.offsetHeight * 0.5) {
-            if (top < bestTop) { bestTop = top; best = a; }
+        var current = articles[0];
+        // 从前往后找：最后一个顶部已滚过视口上方的即为当前阅读的 article
+        for (var i = 0; i < articles.length; i++) {
+          if (articles[i].getBoundingClientRect().top <= 150) {
+            current = articles[i];
           }
-        });
-        if (best) {
-          var link = document.querySelector('.detail-sidebar nav [href="#' + best.id + '"]');
-          if (link && link !== activeLink) highlight(link);
         }
+        var link = document.querySelector('.detail-sidebar nav [href="#' + current.id + '"]');
+        if (link && link !== activeLink) highlight(link);
       }
 
-      // rAF 节流的 scroll 监听
       var ticking = false;
       window.addEventListener('scroll', function () {
         if (!ticking) {
@@ -333,7 +327,10 @@
         }
       }, { passive: true });
 
-      // 初始高亮
+      // 页面加载后立即执行一次
+      updateHighlight();
+
+      // URL 参数 ?id= 初始跳转
       var params = new URLSearchParams(window.location.search);
       var vulnId = params.get('id');
       if (vulnId) {
