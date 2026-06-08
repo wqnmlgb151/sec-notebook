@@ -294,10 +294,44 @@
     /* 读取 URL 参数 id，自动滚动到对应漏洞章节 */
     (function () {
       'use strict';
-      const params = new URLSearchParams(window.location.search);
-      const vulnId = params.get('id');
+
+      // 侧边栏滚动高亮同步
+      if ('IntersectionObserver' in window) {
+        var articles = document.querySelectorAll('.detail-article');
+        var navLinks = document.querySelectorAll('.detail-sidebar nav a');
+        var activeLink = navLinks[0];
+
+        var observer = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+              if (activeLink) activeLink.style.color = 'var(--color-text-tertiary)';
+              var id = entry.target.id;
+              navLinks.forEach(function (link) {
+                if (link.getAttribute('href') === '#' + id) {
+                  link.style.color = 'var(--color-accent)';
+                  activeLink = link;
+                }
+              });
+            }
+          });
+        }, { rootMargin: '-20% 0px -60% 0px', threshold: 0 });
+
+        articles.forEach(function (el) { observer.observe(el); });
+      }
+
+      // URL 参数 ?id= → 初始高亮 + 自动滚动
+      var params = new URLSearchParams(window.location.search);
+      var vulnId = params.get('id');
       if (vulnId) {
-        const target = document.getElementById(vulnId);
+        // 初始高亮
+        var initLink = document.querySelector('.detail-sidebar nav [href="#' + vulnId + '"]');
+        if (initLink) {
+          var first = document.querySelector('.detail-sidebar nav a');
+          if (first) first.style.color = 'var(--color-text-tertiary)';
+          initLink.style.color = 'var(--color-accent)';
+        }
+        // 自动滚动
+        var target = document.getElementById(vulnId);
         if (target) {
           setTimeout(function () {
             target.scrollIntoView({ behavior: 'smooth', block: 'start' });
