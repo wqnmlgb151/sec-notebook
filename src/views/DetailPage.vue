@@ -45,7 +45,7 @@
             <p>{{ a.principle }}</p>
 
             <!-- 终端示例 -->
-            <div v-if="a.terminalLines" class="terminal-box" style="margin: 1.5rem 0;">
+            <div v-if="a.terminalLines && a.terminalLines.length" class="terminal-box" style="margin: 1.5rem 0;">
               <div class="terminal-header">
                 <span class="terminal-dot terminal-dot--red"></span>
                 <span class="terminal-dot terminal-dot--yellow"></span>
@@ -58,7 +58,7 @@
             </div>
 
             <!-- 攻击类型网格 -->
-            <div v-if="a.attackTypes" class="grid grid-2" style="margin: 1rem 0;">
+            <div v-if="a.attackTypes && a.attackTypes.length" class="grid grid-2" style="margin: 1rem 0;">
               <div v-for="(at, i) in a.attackTypes" :key="i" class="card card-glass" style="padding: 1.25rem;">
                 <strong>{{ at.name }}</strong>
                 <p style="font-size:0.85rem; margin-top:0.3rem;">{{ at.desc }}</p>
